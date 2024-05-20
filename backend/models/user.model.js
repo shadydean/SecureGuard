@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { encrypt, decrypt } = require('../utils/encrypt');
 
 const userSchema = new mongoose.Schema({
+
   email: { type: String, required: true, unique: true },
   password: {
     type: String,
@@ -11,9 +12,13 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: { type: String, required: true },
   active: { type: Boolean, default: true },
-  role: { type: String, required: true,
-    enum: ['user', 'admin'], default: 'user'
-   }
+  role:{
+    type:String,
+    required:true,
+    default:'user',
+    enum:['user','admin'],
+}
+
 });
 
 userSchema.set('toJSON', { getters: true, virtuals: false });
