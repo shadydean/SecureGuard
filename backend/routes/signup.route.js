@@ -7,5 +7,6 @@ routes.use(express.urlencoded({ extended: true }))
 const UserModel=require('../models/user.model')
 const {saveUser}=require('../controller/SignupController')
 
-routes.post('/signup',saveUser)
+routes.post('/',saveUser)
 module.exports=routes
+

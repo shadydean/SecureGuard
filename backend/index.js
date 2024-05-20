@@ -21,13 +21,12 @@ app.get('/', (req, res) => {
 });
 
 // Set base endpoint for all routes
-app.use('/api', loginRoute);
-app.use('/api', signupRoute);
-app.use('/api', bankRoute);
-app.use('/api', mediaRoute);
-app.use('/api', credentialsRoute);
-app.use('/api', adminRoute);
-
+app.use('/api/login', loginRoute);
+app.use('/api/signup', signupRoute);
+app.use('/api/bank', bankRoute);
+app.use('/api/media', mediaRoute);
+app.use('/api/credentials', credentialsRoute);
+app.use('/api/admin', adminRoute);
 const PORT = process.env.PORT || 4321;
 
 app.listen(PORT, () => {

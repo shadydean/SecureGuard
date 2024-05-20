@@ -7,9 +7,10 @@ routes.use(express.urlencoded({ extended: true }))
 const BankValutModel=require('../models/bankvault.model')
 const{getBankInfo,bankInfoById,bankInfoEditSave,bankInfoSave,bankInfoDelete}=require('../controller/BankVaultController')
 
-routes.get('/bank',getBankInfo)
-routes.get('/bank/:id',bankInfoById)
-routes.put('/bank/:id',bankInfoEditSave)
-routes.post('/bank',bankInfoSave)
-routes.delete('/bank/:id',bankInfoDelete)
+routes.get('/',getBankInfo)
+routes.get('/:id',bankInfoById)
+routes.put('/:id',bankInfoEditSave)
+routes.post('/',bankInfoSave)
+routes.delete('/:id',bankInfoDelete)
+
 module.exports=routes
