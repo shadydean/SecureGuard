@@ -7,6 +7,7 @@ connectDB()
 const loginRoute = require('./routes/login.route')
 app.use(express.json())
 
+
 app.get('/',(req,res)=>{
 
     res.send('API is running')

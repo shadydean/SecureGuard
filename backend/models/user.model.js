@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     default:'user',
     enum:['user','admin'],
 }
+
 });
 
 userSchema.set('toJSON', { getters: true, virtuals: false });
