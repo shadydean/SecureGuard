@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: { type: String, required: true },
   active: { type: Boolean, default: true },
-  role: { type: String, required: true }
+  role: { type: String, required: true,
+    enum: ['user', 'admin'], default: 'user'
+   }
 });
 
 userSchema.set('toJSON', { getters: true, virtuals: false });
