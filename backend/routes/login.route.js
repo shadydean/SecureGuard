@@ -1,11 +1,11 @@
-const express=require('express')
-const routes=express.Router()
+const express = require('express');
+const loginRoute = express.Router();
 
-routes.use(express.json())
-routes.use(express.urlencoded({ extended: true }))
+loginRoute.use(express.json());
+loginRoute.use(express.urlencoded({ extended: true }));
 
-const UserModel=require('../models/user.model')
-const {checkUser}=require('../controller/LoginController')
+const login = require('../controllers/LoginController');
 
-routes.post('/',checkUser)
-module.exports=routes
+loginRoute.post('/', login);
+
+module.exports = loginRoute;

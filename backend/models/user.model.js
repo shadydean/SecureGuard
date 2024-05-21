@@ -7,14 +7,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    set: encrypt, // Encrypt the password before saving
-    get: decrypt // Decrypt the password when retrieving
+    // set: encrypt, // Encrypt the password before saving
+    // get: decrypt // Decrypt the password when retrieving
   },
-  mobileNumber: { type: String, required: true },
-  active: { type: Boolean, default: true },
+  mobilenumber: { type: String, required: true },
+  active: { type: Boolean, default: false },
   role:{
     type:String,
-    required:true,
     default:'user',
     enum:['user','admin'],
 }

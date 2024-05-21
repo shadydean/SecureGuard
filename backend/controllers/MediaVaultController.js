@@ -1,4 +1,4 @@
-const MediaVaultModel = require('../models/MediaVaultModel');
+const MediaVaultModel = require('../models/mediavault.model');
 
 class MediaValutController {
   // Method to fetch all media information for a user

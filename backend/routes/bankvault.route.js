@@ -1,16 +1,18 @@
 const express=require('express')
-const routes=express.Router()
+const bankRoute=express.Router()
+const auth = require('../middleware/auth.middleware')
 
-routes.use(express.json())
-routes.use(express.urlencoded({ extended: true }))
+bankRoute.use(express.json())
+bankRoute.use(express.urlencoded({ extended: true }))
 
-const BankValutModel=require('../models/bankvault.model')
-const{getBankInfo,bankInfoById,bankInfoEditSave,bankInfoSave,bankInfoDelete}=require('../controller/BankVaultController')
+const BankVaultModel=require('../models/bankvault.model')
+const{getBankInfo,getBankInfoById,bankInfoEditSave,bankInfoSave,bankInfoDelete}=require('../controllers/BankVaultController')
+bankRoute.use(auth);
 
-routes.get('/',getBankInfo)
-routes.get('/:id',bankInfoById)
-routes.put('/:id',bankInfoEditSave)
-routes.post('/',bankInfoSave)
-routes.delete('/:id',bankInfoDelete)
+bankRoute.get('/',getBankInfo)
+bankRoute.get('/:id',getBankInfoById)
+bankRoute.put('/:id',bankInfoEditSave)
+bankRoute.post('/',bankInfoSave)
+bankRoute.delete('/:id',bankInfoDelete)
 
-module.exports=routes
+module.exports=bankRoute

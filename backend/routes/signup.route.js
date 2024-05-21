@@ -1,12 +1,11 @@
 const express=require('express')
-const routes=express.Router()
+const signupRoute=express.Router()
 
-routes.use(express.json())
-routes.use(express.urlencoded({ extended: true }))
+signupRoute.use(express.json())
+signupRoute.use(express.urlencoded({ extended: true }))
 
 const UserModel=require('../models/user.model')
-const {saveUser}=require('../controller/SignupController')
+const saveUser=require('../controllers/SignupController')
 
-routes.post('/',saveUser)
-module.exports=routes
-
+signupRoute.post('/',saveUser)
+module.exports=signupRoute

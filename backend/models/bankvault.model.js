@@ -4,14 +4,12 @@ const { encrypt, decrypt } = require("../utils/encrypt");
 const bankVaultSchema = new mongoose.Schema({
   vaultId: { type: String, required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  accountNumber: { type: String, required: true, set: encrypt, get: decrypt },
-  accountName: { type: String, required: true, set: encrypt, get: decrypt },
+  accountNumber: { type: String, required: true, unique: true },
+  accountName: { type: String, required: true },
   IFSC: { type: String, required: true },
-  userName: { type: String, required: true, set: encrypt, get: decrypt },
-  password: { type: String, required: true, set: encrypt, get: decrypt },
+  userName: { type: String, required: true},
+  password: { type: String, required: true },
 });
-
-bankVaultSchema.set("toJSON", { getters: true, virtuals: false });
 
 const BankVaultModel = mongoose.model("BankVault", bankVaultSchema);
 module.exports = BankVaultModel;

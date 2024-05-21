@@ -12,7 +12,7 @@ const signupRoute = require('./routes/signup.route');
 const bankRoute = require('./routes/bankvault.route');
 const mediaRoute = require('./routes/mediavault.route');
 //const credentialsRoute = require('./routes/credentials.route');
-//const adminRoute = require('./routes/admin.route');
+const adminRoute = require('./routes/admin.route');
 
 app.use(express.json());
 
@@ -25,7 +25,7 @@ app.use('/api/login', loginRoute);
 app.use('/api/signup', signupRoute);
 app.use('/api/bank', bankRoute);
 app.use('/api/media', mediaRoute);
-app.use('/api/credentials', credentialsRoute);
+// app.use('/api/credentials', credentialsRoute);
 app.use('/api/admin', adminRoute);
 const PORT = process.env.PORT || 4321;
 

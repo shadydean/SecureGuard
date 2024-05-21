@@ -1,16 +1,16 @@
 const express=require('express')
-const routes=express.Router()
+const mediaRoute=express.Router()
 
-routes.use(express.json())
-routes.use(express.urlencoded({ extended: true }))
+mediaRoute.use(express.json())
+mediaRoute.use(express.urlencoded({ extended: true }))
 
 const MediaVaultModel=require('../models/mediavault.model')
-const{getMediaInfo,mediaInfoById,mediaInfoEditSave,mediaInfoSave,mediaInfoDelete}=require('../controller/MediaVaultController')
+const{getMediaInfo,getMediaInfoById,mediaInfoEditSave,mediaInfoSave,mediaInfoDelete}=require('../controllers/MediaVaultController')
 
-routes.get('/',getMediaInfo)
-routes.get('/:id',mediaInfoById)
-routes.put('/:id',mediaInfoEditSave)
-routes.post('/',mediaInfoSave)
-routes.delete('/:id',bankInfoDelete)
+mediaRoute.get('/',getMediaInfo)
+mediaRoute.get('/:id',getMediaInfoById)
+mediaRoute.put('/:id',mediaInfoEditSave)
+mediaRoute.post('/',mediaInfoSave)
+mediaRoute.delete('/:id',mediaInfoDelete)
 
-module.exports=routes
+module.exports=mediaRoute
