@@ -30,7 +30,7 @@ const login = async (req, res) => {
                 role: user.role
             }
         };
-        const token = jwt.sign(payload, process.env.JWT_PVT_KEY, { expiresIn: '1h' });
+        const token = jwt.sign(payload, process.env.JWT_PVT_KEY);
         
         res.header('auth-token', token).send({ token });
     } catch (err) {

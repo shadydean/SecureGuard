@@ -82,7 +82,12 @@ class BankVaultController {
   // Method to delete bank information
   async bankInfoDelete(req, res) {
     try {
-      const deletedBankInfo = await BankVaultModel.findByIdAndDelete(req.params.id);
+      const encryptedId = encrypt(req.params.id);
+      const idd = await BankVaultModel.findOne({ accountNumber: encryptedId });
+      if (!idd) {
+          return res.status(404).json({ message: 'Document with specified account number not found' });
+      }
+      const deletedBankInfo = await BankVaultModel.findByIdAndDelete(idd._id);
       if (!deletedBankInfo) return res.status(404).json({ message: 'Bank information not found' });
       res.json({ message: 'Bank information deleted successfully' });
     } catch (err) {
