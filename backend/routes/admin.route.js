@@ -10,7 +10,7 @@ const auth = require('../middleware/auth.middleware')
 const isAdmin = require('../middleware/isadmin.middleware')
 
 adminRoute.get('/user', auth, isAdmin, getUsers)
-adminRoute.post('/approveUser', auth, isAdmin, approveUser)
+adminRoute.post('/approveUser/:id', auth, isAdmin, approveUser)
 adminRoute.get('/user/:id', auth, isAdmin, getUserById)
 adminRoute.delete('/delete/:id', auth, isAdmin, removeUser)
 adminRoute.put('/update/:id', auth, isAdmin, updateUser)

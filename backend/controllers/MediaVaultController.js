@@ -4,8 +4,7 @@ class MediaValutController {
   // Method to fetch all media information for a user
   async getMediaInfo(req, res) {
     try {
-      const mediaInfo = await MediaVaul
-      tModel.find({ userId: req.user.id });
+      const mediaInfo = await MediaVaultModel.find({ userId: req.user.id });
       res.json(mediaInfo);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -15,8 +14,7 @@ class MediaValutController {
   // Method to fetch specific media information by ID
   async getMediaInfoById(req, res) {
     try {
-      const mediaInfo = await MediaVaul
-      tModel.findById(req.params.id);
+      const mediaInfo = await MediaVaultModel.findById(req.params.id);
       if (!mediaInfo) return res.status(404).json({ message: 'Media information not found' });
       res.json(mediaInfo);
     } catch (err) {
@@ -28,8 +26,7 @@ class MediaValutController {
   async mediaInfoSave(req, res) {
     const { mediaName, image, video, audio } = req.body;
 
-    const newMediaInfo = new MediaVaul
-    tModel({
+    const newMediaInfo = new MediaVaultModel({
       userId: req.user.id,
       mediaName,
       image,
@@ -48,8 +45,7 @@ class MediaValutController {
   // Method to update existing media information
   async mediaInfoEditSave(req, res) {
     try {
-      const updatedMediaInfo = await MediaVaul
-      tModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      const updatedMediaInfo = await MediaVaultModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!updatedMediaInfo) return res.status(404).json({ message: 'Media information not found' });
       res.json(updatedMediaInfo);
     } catch (err) {
@@ -60,8 +56,7 @@ class MediaValutController {
   // Method to delete media information
   async mediaInfoDelete(req, res) {
     try {
-      const deletedMediaInfo = await MediaVaul
-      tModel.findByIdAndDelete(req.params.id);
+      const deletedMediaInfo = await MediaVaultModel.findByIdAndDelete(req.params.id);
       if (!deletedMediaInfo) return res.status(404).json({ message: 'Media information not found' });
       res.json({ message: 'Media information deleted successfully' });
     } catch (err) {

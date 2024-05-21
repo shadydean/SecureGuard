@@ -2,13 +2,11 @@ const User = require('../models/user.model');
 
 const approveUser = async (req, res) => {
   try {
-    const userId = req.params.id;
-    let user = await User.findById(userId);
-
+    const idd = await User.findOne({"mobilenumber": req.params.id})
+    const user = await User.findById(idd._id).select('-password')
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
-
     user.active = true; 
     await user.save();
 
@@ -31,7 +29,8 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try{
-        const user = await User.findById(req.params.id).select('-password')
+        const idd = await User.findOne({"mobilenumber": req.params.id})
+        const user = await User.findById(idd._id).select('-password')
         res.status(200).json(user)
     }catch(err){
         res.status(500).send({message:"Error getting user"})
@@ -40,7 +39,8 @@ const getUserById = async (req, res) => {
 
 const removeUser = async (req, res) => {
     try{
-        const user = await User.findByIdAndDelete(req.params.id)
+        const idd = await User.findOne({"mobilenumber": req.params.id})
+        const user = await User.findByIdAndDelete(idd._id).select('-password')
         res.status(200).json(user)
     }catch(err){
         res.status(500).send({message:"Error deleting user"})
@@ -49,13 +49,13 @@ const removeUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try{
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        const idd = await User.findOne({"mobilenumber": req.params.id})
+        const user = await User.findByIdAndUpdate(idd._id, req.body, { new: true })
         res.status(200).json(user)
     }catch(err){
         res.status(500).send({message:"Error updating user"})
     }
 }
-
 
 
 module.exports = {

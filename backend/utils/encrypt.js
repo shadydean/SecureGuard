@@ -1,10 +1,6 @@
 const crypto = require('crypto');
 
 
-// // Generate a random 32-byte key
-// const key = crypto.randomBytes(32);
-
-// console.log(key.toString('hex'));
 const algorithm = 'aes-256-cbc'; // Encryption algorithm
 const key = process.env.ENCRYPTION_KEY; // Encryption key (32 bytes for AES-256)
 const iv = crypto.randomBytes(16); // Initialization vector
