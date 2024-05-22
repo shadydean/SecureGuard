@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 
-
 const algorithm = 'aes-256-cbc'; // Encryption algorithm
 const key = process.env.ENCRYPTION_KEY; // Encryption key (32 bytes for AES-256)
 const iv = crypto.randomBytes(16); // Initialization vector
@@ -22,4 +21,18 @@ function decrypt(text) {
   return decrypted.toString();
 }
 
-module.exports = { encrypt, decrypt };
+function encryptBin(buffer) {
+  let cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
+  return Buffer.concat([iv, encrypted]); 
+}
+
+function decryptBin(buffer) {
+  let iv = buffer.slice(0, 16); 
+  let encryptedText = buffer.slice(16); 
+  let decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
+  return decrypted;
+}
+
+module.exports = { encrypt, decrypt, encryptBin, decryptBin };
