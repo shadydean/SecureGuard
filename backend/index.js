@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const cors = require("cors")
 
 dotenv.config();
 connectDB();
@@ -14,11 +15,22 @@ const mediaRoute = require('./routes/mediavault.route');
 //const credentialsRoute = require('./routes/credentials.route');
 const adminRoute = require('./routes/admin.route');
 
+app.use(cors({
+    origin: '*',
+    credentials : true
+}))
 app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('API is running');
 });
+
+app.post('/temp', (req, res) => {
+    console.log(req.body)
+    res.send('API is running');
+});
+
+
 
 // Set base endpoint for all routes
 app.use('/api/login', loginRoute);
