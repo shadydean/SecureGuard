@@ -2,21 +2,19 @@ const mongoose = require('mongoose');
 const { encrypt, decrypt } = require('../utils/encrypt');
 
 const mediaVaultSchema = new mongoose.Schema({
-  vaultId: { type: String, required: true },
+  vaultId: { type: String, required: true, default: 's'},
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  mediaName: { type: String, required: true ,unique: true},
+  mediaName: { type: String, required: true ,default:'asd',unique: true},
   image: { type: Buffer
-    // required: true, set: encrypt, get: decrypt
   },
   video: { type: Buffer
-    //  required: true, set: encrypt, get: decrypt
      },
   audio: { type: Buffer
-    //  required: true, set: encrypt, get: decrypt
     }
 });
+mediaVaultSchema.index({ image: 1 }, { unique: false });
 
-// mediaVaultSchema.set('toJSON', { getters: true, virtuals: false });
+
 
 const MediaVaultModel = mongoose.model('MediaVault', mediaVaultSchema);
 module.exports = MediaVaultModel;
