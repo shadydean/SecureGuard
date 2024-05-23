@@ -17,7 +17,9 @@ mediaRoute.use(auth);
 
 mediaRoute.get('/', getMediaInfo);
 mediaRoute.get('/:id', getMediaInfoById);
-mediaRoute.post('/', upload.single('image'), mediaInfoSave);
+// mediaRoute.post('/', upload.single('image'), mediaInfoSave);
+mediaRoute.post('/', upload.single('video'), mediaInfoSave);
+// mediaRoute.post('/', upload.single('audio'), mediaInfoSave);
 mediaRoute.put('/:id', upload.fields([{ name: 'image' }, { name: 'video' }, { name: 'audio' }]), mediaInfoEditSave);
 mediaRoute.delete('/:id', mediaInfoDelete);
 

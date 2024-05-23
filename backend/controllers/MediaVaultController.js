@@ -42,12 +42,14 @@ class MediaVaultController {
 
   async mediaInfoSave(req, res) {
 
-    const { vaultId, mediaName, video, audio } = req.body;
+    const { vaultId, mediaName} = req.body;
     const image =  req.file ?   req.file.path : null;
-    console.log(req.file)
-    if (!image) {
-      return res.status(400).json({ message: 'Image upload failed.' });
-    }
+    const video = req.file ? req.file.path : null;
+    const audio = req.file ? req.file.path : null;
+    // console.log(req.file)
+    // if (!image) {
+    //   return res.status(400).json({ message: 'Image upload failed.' });
+    // }
     const encryptedImage = image ? encryptBin(Buffer.from(image, 'binary')) : null;
     const encryptedVideo = video ? encryptBin(Buffer.from(video, 'binary')) : null;
     const encryptedAudio = audio ? encryptBin(Buffer.from(audio, 'binary')) : null;
