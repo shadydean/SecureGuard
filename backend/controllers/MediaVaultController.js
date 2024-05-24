@@ -4,10 +4,15 @@ const { encryptBin, decryptBin } = require('../utils/encrypt');
 
 class MediaVaultController {
   async getMediaInfo(req, res) {
+    console.log("hello")
     try {
-      const mediaInfo = await MediaVaultModel.find();
-      res.json(mediaInfo);
+      const mediaInfo = await MediaVaultModel.find({});
+      const {video,iv} = mediaInfo[0]
+      let data =  decryptBin(video,iv);
+      console.log(data, "here is the data")
+      res.status(200).json({ data: data });
     } catch (err) {
+      console.log(err)
       res.status(500).json({ message: err.message });
     }
   }
@@ -36,12 +41,14 @@ class MediaVaultController {
 
       res.json(mediaInfo);
     } catch (err) {
+
       res.status(500).json({ message: err.message });
     }
   }
 
 
   async mediaInfoSave(req, res) {
+    console.log(req.file)
     try {
       if (!req.file) {
         return res.status(400).send({ message: 'No file uploaded' });
