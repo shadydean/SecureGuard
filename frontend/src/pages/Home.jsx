@@ -35,15 +35,15 @@ const Home = () => {
 
   return (
     <div>
-      {data && <img src={`data:image/jpg;base64,${data}`} alt=""/>}
-      {/* {data ? (
+      {/* {data && <img src={`data:image/jpg;base64,${data}`} alt=""/>} */}
+      {data ? (
         <video controls>
           <source src={`data:video/mp4;base64,${data}`} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       ) : (
         <p>Loading video...</p>
-      )} */}
+      )}
     </div>
   )
 }

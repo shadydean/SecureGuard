@@ -5,6 +5,11 @@ class BankVaultController {
   async bankInfoSave(req, res) {
     try {
       const { vaultId, accountNumber, accountName, IFSC, userName, password } = req.body;
+      const existingVault = await BankVaultModel.findOne({vaultId: vaultId})
+      
+      if(existingVault){
+        return res.status(409).json({ message: 'Vault id already exists'})
+      }
 
       const encryptedAccountNumber = encrypt(accountNumber);
       const encryptedAccountName = encrypt(accountName);

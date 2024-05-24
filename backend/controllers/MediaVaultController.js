@@ -7,8 +7,8 @@ class MediaVaultController {
     console.log("hello")
     try {
       const mediaInfo = await MediaVaultModel.find({});
-      const {image,iv} = mediaInfo[0]
-      let data =  decryptBin(image,iv);
+      const {video,iv} = mediaInfo[0]
+      let data =  decryptBin(video,iv);
       console.log(data, "here is the data")
       res.status(200).json({ data: data });
     } catch (err) {
@@ -49,8 +49,15 @@ class MediaVaultController {
 
   async mediaInfoSave(req, res) {
     const {image,video,audio} = req.files
+    const vaultId = req.body.vaultId
     try {
+      console.log(req.body)
 
+      // const existingVault = await MediaVaultModel.findOne({vaultId: vaultId})
+
+      // if(existingVault){
+      //   return res.status(409).json({ message: 'Vault id already exists'})
+      // }
       if(image !== undefined){
         req.file = req.files.image[0]
       }
@@ -86,6 +93,8 @@ class MediaVaultController {
       }
   
       const newMediaVault = new MediaVaultModel({
+        vaultId: vaultId,
+        // mediaName: mediaName,
         userId: userId,
         mediaName: fileName,
         [mediaType]: fileBuffer,
