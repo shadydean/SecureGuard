@@ -7,8 +7,8 @@ class MediaVaultController {
     console.log("hello")
     try {
       const mediaInfo = await MediaVaultModel.find({});
-      const {video,iv} = mediaInfo[0]
-      let data =  decryptBin(video,iv);
+      const {image,iv} = mediaInfo[0]
+      let data =  decryptBin(image,iv);
       console.log(data, "here is the data")
       res.status(200).json({ data: data });
     } catch (err) {
@@ -48,8 +48,17 @@ class MediaVaultController {
 
 
   async mediaInfoSave(req, res) {
-    console.log(req.file)
+    const {image,video,audio} = req.files
     try {
+
+      if(image !== undefined){
+        req.file = req.files.image[0]
+      }
+      else if(video!== undefined){
+        req.file = req.files.video[0]
+      }
+      else
+        req.file = req.files.audio[0]
       if (!req.file) {
         return res.status(400).send({ message: 'No file uploaded' });
       }

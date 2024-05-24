@@ -7,11 +7,6 @@ const Home = () => {
   const {user} = useContext(AuthContext)
   const [data,setData] = useState(null)
   const nav = useNavigate()
-    useEffect(() => {
-        if(user === null){
-            nav("/")
-        }
-    },[user])
 
     useEffect( () => {
       async function fetchData() {
@@ -31,21 +26,24 @@ const Home = () => {
         // console.log(base64String)
       }
 
-      if(user)
+      if(user !== null)
           fetchData()
+      else {
+        nav("/")
+      }
   },[user])
 
   return (
     <div>
-      {/* {data && <img src={`data:image/jpg;base64,${data}`} alt=""/>} */}
-      {data ? (
+      {data && <img src={`data:image/jpg;base64,${data}`} alt=""/>}
+      {/* {data ? (
         <video controls>
           <source src={`data:video/mp4;base64,${data}`} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       ) : (
         <p>Loading video...</p>
-      )}
+      )} */}
     </div>
   )
 }
