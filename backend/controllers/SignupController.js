@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 
 const saveUser = async (req, res) => {
-    const { email, password, mobilenumber,role } = req.body;
+    const { email,password, mobilenumber,role } = req.body;
 
     console.log('Request body:', req.body);
 

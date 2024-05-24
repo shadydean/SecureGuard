@@ -4,13 +4,11 @@ const { encrypt, decrypt } = require('../utils/encrypt');
 const userSchema = new mongoose.Schema({
 
   email: { type: String, required: true, unique: true },
-  name: {type: String, required: true},
+  // name: {type: String, required: true},
   password: {
     type: String,
     required: true,
-    // set: encrypt, // Encrypt the password before saving
-    // get: decrypt // Decrypt the password when retrieving
-  },
+    },
   mobilenumber: { type: String, required: true },
   active: { type: Boolean, default: false },
   role:{
