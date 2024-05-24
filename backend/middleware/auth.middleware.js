@@ -10,6 +10,7 @@ const auth = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_PVT_KEY);
         req.user = decoded.user;
+        req.userId = decoded.id;
         next();
     } catch (err) {
         res.status(400).json({ message: 'Token is not valid' });

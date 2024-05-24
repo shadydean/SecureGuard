@@ -21,17 +21,26 @@ function decrypt(text) {
   return decrypted.toString();
 }
 
-function encryptBin(buffer) {
-  let cipher = crypto.createCipheriv(algorithm, key, iv);
-  let encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
-  return Buffer.concat([iv, encrypted]); 
+function encryptBin(data) {
+  const algorithm = 'aes-256-cbc';
+  const iv = crypto.randomBytes(16);
+
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(data);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+  return {
+    encryptedData: encrypted.toString('hex'),
+    iv: iv.toString('hex')
+  };
 }
 
-function decryptBin(buffer) {
-  let iv = buffer.slice(0, 16); 
-  let encryptedText = buffer.slice(16); 
-  let decipher = crypto.createDecipheriv(algorithm, key, iv);
-  let decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
+function decryptBin(encryptedData, iv) {
+  const algorithm = 'aes-256-cbc';
+  const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
+  let decrypted = decipher.update(Buffer.from(encryptedData, 'hex'));
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+
   return decrypted;
 }
 
