@@ -40,35 +40,53 @@ class MediaVaultController {
     }
   }
 
+
   async mediaInfoSave(req, res) {
-
-    const { vaultId, mediaName} = req.body;
-    const image =  req.file ?   req.file.path : null;
-    const video = req.file ? req.file.path : null;
-    const audio = req.file ? req.file.path : null;
-    // console.log(req.file)
-    // if (!image) {
-    //   return res.status(400).json({ message: 'Image upload failed.' });
-    // }
-    const encryptedImage = image ? encryptBin(Buffer.from(image, 'binary')) : null;
-    const encryptedVideo = video ? encryptBin(Buffer.from(video, 'binary')) : null;
-    const encryptedAudio = audio ? encryptBin(Buffer.from(audio, 'binary')) : null;
-
-    const newMediaInfo = new MediaVaultModel({
-      vaultId,
-      userId: req.user.id,
-      mediaName,
-      image: encryptedImage,
-      video: encryptedVideo,
-      audio: encryptedAudio
-    });
-
     try {
-      const savedMediaInfo = await newMediaInfo.save();
-      console.log(req.body)
-      res.status(201).json(savedMediaInfo);
+      if (!req.file) {
+        return res.status(400).send({ message: 'No file uploaded' });
+      }
+  
+      const userId = req.user.id;
+      if (!userId) {
+        return res.status(400).send({ message: 'userId is required' });
+      }
+  
+      console.log('File received:', req.file); // Debugging log
+  
+      const fileBuffer = req.file.buffer;
+      const fileName = req.file.originalname;
+      const mimeType = req.file.mimetype;
+  
+      let mediaType;
+      if (mimeType.startsWith('image')) {
+        mediaType = 'image';
+      } else if (mimeType.startsWith('video')) {
+        mediaType = 'video';
+      } else if (mimeType.startsWith('audio')) {
+        mediaType = 'audio';
+      } else {
+        return res.status(400).send({ message: 'Unsupported file type' });
+      }
+  
+      const newMediaVault = new MediaVaultModel({
+        userId: userId,
+        mediaName: fileName,
+        [mediaType]: fileBuffer,
+      });
+  
+      await newMediaVault.save();
+  
+      console.log('File uploaded successfully:', {
+        fileName: fileName,
+        fileSize: req.file.size,
+        mimeType: mimeType,
+      });
+  
+      res.status(200).send({ message: 'File uploaded successfully', file: req.file });
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      console.error('Error handling file upload:', err);
+      res.status(500).send({ message: 'Server error' });
     }
   }
 
