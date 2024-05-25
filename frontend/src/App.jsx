@@ -4,18 +4,23 @@ import './App.css'
 import LandingPage from './pages/LandingPage'
 import Home from './pages/Home'
 import Temp from './pages/Temp'
+import PrivateRoute from './pages/PrivateRoute'
+import Footer from './components/Footer'
 
 function App() {
 
   return (
-      <div className='bg-slate-700 min-h-dvh text-white'>
+      <div className='bg-slate-900 min-h-dvh text-white'>
         <Router>
           <Routes>
             <Route path='/' element={<LandingPage />} />
-            <Route path='/home' element={<Home />}/>
-            <Route path='/temp' element={<Temp />}/>
+            <Route element={<PrivateRoute />}>
+              <Route path='/home' element={<Home />}/>
+              <Route path='/temp' element={<Temp />}/>
+            </Route>
           </Routes>
         </Router>
+        <Footer />
       </div> 
     
   )

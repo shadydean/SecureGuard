@@ -5,10 +5,11 @@ const { encryptBin, decryptBin } = require('../utils/encrypt');
 class MediaVaultController {
   async getMediaInfo(req, res) {
     console.log("hello")
+    // userId -> vaultId
     try {
       const mediaInfo = await MediaVaultModel.find({});
-      const {video,iv} = mediaInfo[0]
-      let data =  decryptBin(video,iv);
+      const {image,iv} = mediaInfo[0]
+      let data =  decryptBin(image,iv);
       console.log(data, "here is the data")
       res.status(200).json({ data: data });
     } catch (err) {
