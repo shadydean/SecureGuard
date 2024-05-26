@@ -1,22 +1,47 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import ReactDOM from 'react-dom'
 import Login from '../components/Login'
 import sgLogo from '../assets/sgLogo.jpg'
 import file from '../assets/file.png'
 import { AuthContext } from '../context/Auth'
 import { Navigate } from 'react-router-dom'
 import { FaCheck } from "react-icons/fa";
+import Signup from '../components/Signup'
+
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex flex-col items-center justify-center">
+      
+          <Login />
+          <button onClick={onClose} className="text-[2.5rem] p-0 my-2 aspect-square flex items-center justify-center bg-red-500 rounded-full border-none outline-none text-white">&times;</button>
+      </div>
+    ,
+    document.body
+  );
+};
 
 const LandingPage = () => {
     const {user} = useContext(AuthContext)
     const topPage = useRef(null)
     const aboutUs = useRef(null)
     const contactUs = useRef(null)
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const scrollToSection = (ref) => {
       window.scrollTo({
         top: ref.current.offsetTop - 70,
         behavior: 'smooth'
       });
+    };
+
+    const openModal = () => {
+      setIsModalOpen(true);
+    };
+  
+    const closeModal = () => {
+      setIsModalOpen(false);
     };
 
     if(user !== null)
@@ -34,7 +59,7 @@ const LandingPage = () => {
           <div className="">
             <button className='mx-5 font-semibold px-2 py-2 rounded-lg hover:text-slate-900 hover:bg-white' onClick={() => scrollToSection(aboutUs)}>About us</button>
             <button className='mx-5 font-semibold px-2 py-2 rounded-lg hover:text-slate-900 hover:bg-white' onClick={() => scrollToSection(contactUs)}>Contact us</button>    
-            <button onClick={() => scrollToSection(ref)} className='font-semibold mx-5 px-6 py-2 bg-blue-700 rounded-lg hover:bg-blue-600 shadow-md shadow-black'>Login</button>
+            <button onClick={openModal} className='font-semibold mx-5 px-6 py-2 bg-blue-700 rounded-lg hover:bg-blue-600 shadow-md shadow-black'>Login</button>
           </div>
           
         </nav>
@@ -57,13 +82,92 @@ const LandingPage = () => {
         </section>
 
         {/* about us section */}
+        <section className=" text-white" id="features">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-[3rem] font-semibold mb-8">Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="p-6 bg-slate-700 text-slate-100 rounded-lg shadow-lg">
+              <h3 className="text-xl  font-semibold mb-4">Robust Encryption</h3>
+              <p className='font-thin'>SecureGuard uses industry-leading encryption technology to protect your data.</p>
+            </div>
+            <div className="p-6 bg-slate-700 text-slate-100 rounded-lg shadow-lg">
+              <h3 className="text-xl  font-semibold mb-4">User-Friendly Interface</h3>
+              <p className='font-thin'>Easily organize and access your files with our intuitive platform.</p>
+            </div>
+            <div className="p-6 bg-slate-700 text-slate-100 rounded-lg shadow-lg">
+              <h3 className="text-xl  font-semibold mb-4">Real-Time Monitoring</h3>
+              <p className='font-thin'>Stay informed with real-time monitoring and alerts for your data.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <section className='h-[50rem]' id='about-us'  ref={aboutUs}>
-          <Login />
-        </section>
-        <section className='h-[50rem]' id='contact-us' ref={contactUs}>
-          contact us section
-        </section>
+      <section className="py-20 text-white" id="benefits">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold mb-8">Benefits</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+              <h3 className="text-xl font-semibold mb-4">Data Security</h3>
+              <p className='font-thin'>Keep your sensitive information safe and secure from unauthorized access.</p>
+            </div>
+            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+              <h3 className="text-xl font-semibold mb-4">Privacy Protection</h3>
+              <p className='font-thin'>Your data privacy is our top priority, ensuring complete confidentiality.</p>
+            </div>
+            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+              <h3 className="text-xl font-semibold mb-4">Ease of Use</h3>
+              <p className='font-thin'>Our platform is designed for ease of use, making data management simple.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 text-white " id="testimonials">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold mb-8">What Our Users Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+              <p className="mb-4 font-thin">"SecureGuard has transformed the way we manage our data. It's incredibly secure and easy to use!"</p>
+              <p className="font-bold">- Jane Doe</p>
+            </div>
+            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+              <p className="mb-4 font-thin">"I feel much safer knowing that my sensitive information is protected by SecureGuard."</p>
+              <p className="font-bold">- John Smith</p>
+            </div>
+            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+              <p className="mb-4 font-thin">"The best data protection service I've used. Highly recommend SecureGuard!"</p>
+              <p className="font-bold">- Mary Johnson</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 text-white" id="contactUs" ref={contactUs}>
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
+          <p className="text-lg">For any inquiries or support, feel free to reach out to us.</p>
+          <div className="mt-8">
+            <button className="bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:bg-blue-600" onClick={() => scrollToSection(contactUs)}>
+              Get in Touch
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <h2 className="text-2xl font-bold mb-4">Admin Login</h2>
+        <form>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="email" name="email" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input type="password" id="password" name="password" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+          </div>
+          <button type="submit" className="w-full bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">Login</button>
+        </form>
+      </Modal>
       </div>
     )
 

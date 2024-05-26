@@ -10,7 +10,7 @@ import Footer from './components/Footer'
 function App() {
 
   return (
-      <div className='bg-slate-900 min-h-dvh text-white'>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-800 min-h-dvh text-white'>
         <Router>
           <Routes>
             <Route path='/' element={<LandingPage />} />

@@ -30,7 +30,7 @@ export default function Login() {
 
   return (
     <div className="w-[23rem] h-[24rem] shadow-lg shadow-black  p-4 bg-slate-800 ring-1 rounded-2xl ring-cyan-700 flex flex-col items-center justify-evenly">
-      <h1 className="text-3xl mb-4">Admin Login</h1> 
+      <h1 className="text-3xl mb-4 text-white">Admin Login</h1> 
         <form onSubmit={handleSubmit(onSubmit)} className="w-2/3 space-y-6 flex flex-col">
           <input type="email" className="py-1 rounded-sm text-black" placeholder="Email" {...register("email")} />
 
