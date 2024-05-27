@@ -1,4 +1,4 @@
-const MediaVaultModel = require('../models/mediavault.model');
+const MediaModel = require('../models/media.model');
 const User = require('../models/user.model');
 const { encryptBin, decryptBin } = require('../utils/encrypt');
 
@@ -7,7 +7,7 @@ class MediaVaultController {
     console.log("hello")
     // userId -> vaultId
     try {
-      const mediaInfo = await MediaVaultModel.find({});
+      const mediaInfo = await MediaModel.find({});
       const {image,iv} = mediaInfo[0]
       let data =  decryptBin(image,iv);
       console.log(data, "here is the data")
@@ -20,7 +20,7 @@ class MediaVaultController {
 
   async getMediaInfoById(req, res) {
     try {
-      const mediaDocument = await MediaVaultModel.findOne({ mediaName: req.params.id });
+      const mediaDocument = await MediaModel.findOne({ mediaName: req.params.id });
 
       if (!mediaDocument) {
         return res.status(404).json({ message: 'Media information not found' });
@@ -54,7 +54,7 @@ class MediaVaultController {
     try {
       console.log(req.body)
 
-      // const existingVault = await MediaVaultModel.findOne({vaultId: vaultId})
+      // const existingVault = await MediaModel.findOne({vaultId: vaultId})
 
       // if(existingVault){
       //   return res.status(409).json({ message: 'Vault id already exists'})
@@ -93,7 +93,7 @@ class MediaVaultController {
         return res.status(400).send({ message: 'Unsupported file type' });
       }
   
-      const newMediaVault = new MediaVaultModel({
+      const newMediaVault = new MediaModel({
         vaultId: vaultId,
         // mediaName: mediaName,
         userId: userId,
@@ -118,7 +118,7 @@ class MediaVaultController {
 
   async mediaInfoEditSave(req, res) {
     try {
-      const idd = await MediaVaultModel.findOne({ mediaName: req.params.id });
+      const idd = await MediaModel.findOne({ mediaName: req.params.id });
       if (!idd) {
         return res.status(404).json({ message: 'Media information not found' });
       }
@@ -135,7 +135,7 @@ class MediaVaultController {
         updateData.audio = encryptBin(Buffer.from(updateData.audio, 'binary'));
       }
 
-      const updatedMediaInfo = await MediaVaultModel.findByIdAndUpdate(idd._id, updateData, { new: true });
+      const updatedMediaInfo = await MediaModel.findByIdAndUpdate(idd._id, updateData, { new: true });
 
       if (!updatedMediaInfo) return res.status(404).json({ message: 'Media information not found' });
       res.json(updatedMediaInfo);
@@ -146,12 +146,12 @@ class MediaVaultController {
 
   async mediaInfoDelete(req, res) {
     try {
-      const idd = await MediaVaultModel.findOne({ mediaName: req.params.id });
+      const idd = await MediaModel.findOne({ mediaName: req.params.id });
       if (!idd) {
         return res.status(404).json({ message: 'Media information not found' });
       }
 
-      const deletedMediaInfo = await MediaVaultModel.findByIdAndDelete(idd._id);
+      const deletedMediaInfo = await MediaModel.findByIdAndDelete(idd._id);
       if (!deletedMediaInfo) return res.status(404).json({ message: 'Media information not found' });
       res.json({ message: 'Media information deleted successfully' });
     } catch (err) {

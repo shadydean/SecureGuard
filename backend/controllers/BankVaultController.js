@@ -1,11 +1,10 @@
-const BankVaultModel = require('../models/bankvault.model');
+const BankModel = require('../models/bank.model');
 const { encrypt, decrypt } = require('../utils/encrypt');
-const mongoose = require('mongoose');
 class BankVaultController {
   async bankInfoSave(req, res) {
     try {
       const { vaultId, accountNumber, accountName, IFSC, userName, password } = req.body;
-      const existingVault = await BankVaultModel.findOne({vaultId: vaultId})
+      const existingVault = await BankModel.findOne({vaultId: vaultId})
       
       if(existingVault){
         return res.status(409).json({ message: 'Vault id already exists'})
@@ -16,7 +15,7 @@ class BankVaultController {
       const encryptedUserName = encrypt(userName);
       const encryptedPassword = encrypt(password);
 
-      const newBankInfo = new BankVaultModel({
+      const newBankInfo = new BankModel({
         vaultId,
         userId: req.user.id,
         accountNumber: encryptedAccountNumber,
@@ -35,7 +34,7 @@ class BankVaultController {
 
   async getBankInfo(req, res) {
     try {
-      const bankInfo = await BankVaultModel.find({ userId: req.user.id });
+      const bankInfo = await BankModel.find({ userId: req.user.id });
 
       // Decrypt sensitive data before sending the response
       const decryptedBankInfo = bankInfo.map(info => ({
@@ -57,7 +56,7 @@ class BankVaultController {
     try {
       const encryptedId = encrypt(req.params.id);
       console.log(encryptedId);
-      const bankInfo = await BankVaultModel.findOne({ accountNumber: encryptedId });
+      const bankInfo = await BankModel.findOne({ accountNumber: encryptedId });
 
       if (!bankInfo) return res.status(404).json({ message: 'Bank information not found' });
       res.json(bankInfo);
@@ -68,11 +67,11 @@ class BankVaultController {
   async bankInfoEditSave(req, res) {
     try {
       const encryptedId = encrypt(req.params.id);
-      const idd = await BankVaultModel.findOne({ accountNumber: encryptedId });
+      const idd = await BankModel.findOne({ accountNumber: encryptedId });
       if (!idd) {
           return res.status(404).json({ message: 'Document with specified account number not found' });
       }
-      const updatedBankInfo = await BankVaultModel.findByIdAndUpdate(idd._id, req.body, { new: true });
+      const updatedBankInfo = await BankModel.findByIdAndUpdate(idd._id, req.body, { new: true });
       
       if (!updatedBankInfo) {
           return res.status(404).json({ message: 'Bank information not found' });
@@ -88,11 +87,11 @@ class BankVaultController {
   async bankInfoDelete(req, res) {
     try {
       const encryptedId = encrypt(req.params.id);
-      const idd = await BankVaultModel.findOne({ accountNumber: encryptedId });
+      const idd = await BankModel.findOne({ accountNumber: encryptedId });
       if (!idd) {
           return res.status(404).json({ message: 'Document with specified account number not found' });
       }
-      const deletedBankInfo = await BankVaultModel.findByIdAndDelete(idd._id);
+      const deletedBankInfo = await BankModel.findByIdAndDelete(idd._id);
       if (!deletedBankInfo) return res.status(404).json({ message: 'Bank information not found' });
       res.json({ message: 'Bank information deleted successfully' });
     } catch (err) {

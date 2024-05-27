@@ -5,7 +5,6 @@ const auth = require('../middleware/auth.middleware')
 bankRoute.use(express.json())
 bankRoute.use(express.urlencoded({ extended: true }))
 
-const BankVaultModel=require('../models/bankvault.model')
 const{getBankInfo,getBankInfoById,bankInfoEditSave,bankInfoSave,bankInfoDelete}=require('../controllers/BankVaultController')
 bankRoute.use(auth);
 

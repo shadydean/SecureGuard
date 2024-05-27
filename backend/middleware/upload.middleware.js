@@ -6,7 +6,8 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif|mp4|mp3|wav/;
+    const filetypes = /jpeg|jpg|png|gif|mp4|mp3|wav|mkv|x-matroska/;
+    console.log(file)
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 

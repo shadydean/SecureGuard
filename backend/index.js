@@ -14,6 +14,7 @@ const bankRoute = require('./routes/bankvault.route');
 const mediaRoute = require('./routes/mediavault.route');
 const credentialsRoute = require('./routes/credentials.route');
 const adminRoute = require('./routes/admin.route');
+const vaultRoute = require('./routes/vault.route')
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -25,19 +26,13 @@ app.get('/', (req, res) => {
     res.send('API is running');
 });
 
-app.post('/temp', (req, res) => {
-    console.log(req.body)
-    res.send('API is running');
-});
-
-
 
 // Set base endpoint for all routes
 app.use('/api/login', loginRoute);
 app.use('/api/signup', signupRoute);
 app.use('/api/bank', bankRoute);
 app.use('/api/media', mediaRoute);
-// app.use('/api/credentials', credentialsRoute);
+app.use('/api/vault', vaultRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/credentials', credentialsRoute);
 const PORT = process.env.PORT || 4321;

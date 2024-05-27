@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const {generateKeyPair} = require("../utils/keys")
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 
 const saveUser = async (req, res) => {
+    const {publicKey, privateKey} = await generateKeyPair();
     const { email, password, mobilenumber,role } = req.body;
 
     console.log('Request body:', req.body);
