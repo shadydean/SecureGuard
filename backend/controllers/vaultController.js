@@ -1,18 +1,43 @@
 const MediaVaultModel = require('../models/mediavault.model');
-const BankVaultModel = require('../models/bankvault.model');
+const BankVaultModel = require('../models/bankvault.model')
+const BankModel = require("../models/bank.model")
+const MediaModel = require("../models/media.model")
 class VaultController {
 
-  async getAllVaults(req,res){
-    const {vaultType} = req.body
+ async getVaultInfoById(req,res) {
     try {
-        if(vaultType === "media"){
+        const vaultId = req.params.id;
+        const vaultType = req.query.vaultType
+        console.log(vaultType,vaultId)
+        if(vaultType === 'media') {
+            let vaultInfo = await MediaModel.find({$and : [{userId : req.userId},{vaultId : vaultId}]}).exec();
+            if(!vaultInfo)
+               return res.status(400).json("No such vault exists")
+
+            return res.status(200).json(vaultInfo)
+
+        } else if(vaultType === 'bank') {
+            let vaultInfo = await BankModel.findOne({$and : [{userId : req.userId},{vaultId : vaultId}]}).exec();
+            if(!vaultInfo)
+               return res.status(400).json("No such vault exists")
+
+            return res.status(200).json(vaultInfo)
+        }
+        else
+            return res.status(400).json("something went wrong")
+        
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).json({message : err.message})
+    }
+ }
+
+  async getAllVaults(req,res){
+    try {
             const mediaVaults = await MediaVaultModel.find({userId : req.userId});
-            return res.status(200).json(mediaVaults);
-        }
-        else{
             const bankVaults = await BankVaultModel.find({userId : req.userId});
-            return res.status(200).json(bankVaults);
-        }
+            return res.status(200).json({mediaVaults : mediaVaults, bankVaults : bankVaults});
         } 
     catch (error) {
         console.log(error)

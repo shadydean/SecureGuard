@@ -4,14 +4,37 @@ const { encryptBin, decryptBin } = require('../utils/encrypt');
 
 class MediaVaultController {
   async getMediaInfo(req, res) {
-    console.log("hello")
+    // console.log(req.query.vaultId)
     // userId -> vaultId
     try {
-      const mediaInfo = await MediaModel.find({});
-      const {image,iv} = mediaInfo[0]
-      let data =  decryptBin(image,iv);
-      console.log(data, "here is the data")
-      res.status(200).json({ data: data });
+      let mediaInfo = await MediaModel.find({$and : [{userId : req.userId},{vaultId : req.query.vaultId}]});
+      // console.log(mediaInfo,"data")
+      mediaInfo = mediaInfo.map(media => {
+        if(media.image){
+          let {image,iv} = media
+          let data = decryptBin(image,iv);
+          return {
+            _id : media._id,
+            vaultId : media.vaultId,
+            userId : media.userId,
+            mediaName : media.mediaName,
+            image : data,
+            };
+        }
+        else{
+          let {video,iv} = media
+          let data = decryptBin(video,iv);
+          return {
+            _id : media._id,
+            vaultId : media.vaultId,
+            userId : media.userId,
+            mediaName : media.mediaName,
+            video : data,
+            };
+        }
+      })
+      // console.log(mediaInfo, "here is the data")
+      res.status(200).json(mediaInfo);
     } catch (err) {
       console.log(err)
       res.status(500).json({ message: err.message });

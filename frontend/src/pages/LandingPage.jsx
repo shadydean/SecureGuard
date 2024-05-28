@@ -7,6 +7,7 @@ import { AuthContext } from '../context/Auth'
 import { Navigate } from 'react-router-dom'
 import { FaCheck } from "react-icons/fa";
 import Signup from '../components/Signup'
+import Footer from '../components/Footer'
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
@@ -153,6 +154,7 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      <Footer />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2 className="text-2xl font-bold mb-4">Admin Login</h2>

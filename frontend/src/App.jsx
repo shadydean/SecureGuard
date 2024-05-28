@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Temp from './pages/Temp'
 import PrivateRoute from './pages/PrivateRoute'
 import Footer from './components/Footer'
+import Dashboard from './pages/Dashboard'
 
 function App() {
 
@@ -15,12 +16,12 @@ function App() {
           <Routes>
             <Route path='/' element={<LandingPage />} />
             <Route element={<PrivateRoute />}>
-              <Route path='/home' element={<Home />}/>
+              <Route path='/home' element={<Home />} />
+                <Route path='/dashboard/:id' element = {<Dashboard />} />
               <Route path='/temp' element={<Temp />}/>
             </Route>
           </Routes>
         </Router>
-        <Footer />
       </div> 
     
   )
