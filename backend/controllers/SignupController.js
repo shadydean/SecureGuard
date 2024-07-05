@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const {generateKeyPair} = require("../utils/keys")
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 
 const saveUser = async (req, res) => {
     const {publicKey, privateKey} = await generateKeyPair();
-    const { email, password, mobilenumber,role } = req.body;
+    const { email, password, mobilenumber,name } = req.body;
 
     console.log('Request body:', req.body);
 
@@ -23,7 +24,7 @@ const saveUser = async (req, res) => {
 
         console.log(`Creating new user with email: ${email}`);
 
-        user = new User({ email, password, mobilenumber, active: false,role});
+        user = new User({ email, password, mobilenumber, active: false,name});
         try {
             const salt = await bcrypt.genSalt(10);
             console.log(`Generated salt: ${salt}`);
@@ -35,7 +36,16 @@ const saveUser = async (req, res) => {
         }
         await user.save();
         console.log(`User with email ${email} created successfully`);
-        res.status(201).send({ message: "User created successfully" });
+        const payload = {
+            user: {
+                id: user.id,
+                role: user.role
+            }
+        };
+        const token = jwt.sign(payload, process.env.JWT_PVT_KEY);
+        
+        res.header('auth-token', token).send({ token });
+        // res.status(201).send({ message: "User created successfully" });
 
     } catch (err) {
         console.error(`Error creating user: ${err.message}`);

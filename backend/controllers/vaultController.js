@@ -58,7 +58,7 @@ class VaultController {
     
             const vault = new MediaVaultModel({ name : name,userId : req.userId });
             await vault.save();
-            res.status(201).json({ message: 'Vault created successfully' });
+            res.status(201).json(vault);
         }
         else {
             const allBankVaults = await BankVaultModel.find({userId : req.userId})
@@ -70,7 +70,7 @@ class VaultController {
     
             const vault = new BankVaultModel({ name : name,userId : req.userId });
             await vault.save();
-            res.status(201).json({ message: 'Vault created successfully' });
+            res.status(201).json(vault);
         }
         } 
     catch (error) {

@@ -3,10 +3,11 @@ import { AuthContext } from '../context/Auth'
 import { useNavigate } from 'react-router-dom'
 import {Buffer} from 'buffer'
 import SideBar from '../components/SideBar'
+import { VaultContext } from '../context/Vaults'
 
 const Home = () => {
   const {user,dispatch} = useContext(AuthContext)
-  const [vaults,setVaults] = useState()
+  const {vaults,dispatch : vaultDispatch} = useContext(VaultContext)
   const nav = useNavigate()
 
   useEffect(() => {
@@ -21,14 +22,8 @@ const Home = () => {
 
       if(res.ok){
         let data = await res.json()
-        console.log(data,data.mediaVaults[0])
-        setVaults(data)
-        if(vaults.mediaVaults.length > 0){
-          let id = vaults.mediaVaults[0]._id
-          console.log(id)
-          nav(`/dashboard/${id}`)
-
-        }
+        // console.log(data,data.mediaVaults[0])
+        vaultDispatch({type : "SET",payload : data})
       }
       else{
         console.log("something went wrong")
@@ -41,11 +36,15 @@ const Home = () => {
         fetchData()
   },[user])
 
+  if(vaults?.mediaVaults.length > 0){
+    nav(`/dashboard/${vaults.mediaVaults[0]._id}`)
+  }
+
   return (
     <div className='flex h-screen'>
-      <SideBar vaults={vaults} />
+      <SideBar/>
       <section className='w-5/6 bg-[#636365] text-black'>
-        {vaults && vaults.mediaVaults.type}
+        {/* {vaults && vaults.mediaVaults.type} */}
       </section>
     </div>
   )

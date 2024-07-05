@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import {useForm} from 'react-hook-form'
 import { AuthContext } from '../context/Auth'
 
-export default function Login() {
+export default function Login({hadAccount,setHadAccount}) {
   const {register, handleSubmit,formState} = useForm()
   const {dispatch} = useContext(AuthContext)
   const onSubmit = async (data) => {
@@ -38,6 +38,7 @@ export default function Login() {
 
           <button disabled = {formState.isSubmitting || formState.isLoading} className="bg-cyan-400 w-1/2 self-center rounded-md py-[4px] hover:bg-slate-300 text-black" type="submit">{formState.isSubmitting ? "Logging": "Submit"}</button>
         </form>
+        <button className='outline-none border-none text-white' onClick={() => setHadAccount(acc => !acc)}>{hadAccount ? "Create an account ?" : "Already has account ?"}</button>
     </div>
   )
 }

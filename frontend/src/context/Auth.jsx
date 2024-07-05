@@ -8,6 +8,12 @@ export const authReducer = (state,action) => {
             return {user : action.payload}
 
         case 'LOGOUT' : 
+            localStorage.clear()
+            caches.keys().then((names) => {
+                names.forEach((name) => {
+                    caches.delete(name);
+                });
+            });
             return {user : null}
 
         default : 

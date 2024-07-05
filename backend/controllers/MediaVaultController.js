@@ -21,6 +21,17 @@ class MediaVaultController {
             image : data,
             };
         }
+        else if(media.audio){
+          let {audio,iv} = media
+          let data = decryptBin(audio,iv);
+          return {
+            _id : media._id,
+            vaultId : media.vaultId,
+            userId : media.userId,
+            mediaName : media.mediaName,
+            audio : data,
+            };
+        }
         else{
           let {video,iv} = media
           let data = decryptBin(video,iv);
@@ -43,27 +54,45 @@ class MediaVaultController {
 
   async getMediaInfoById(req, res) {
     try {
-      const mediaDocument = await MediaModel.findOne({ mediaName: req.params.id });
+      const media = await MediaModel.findOne({$and : [{userId : req.userId},{_id : req.params.id}]});
 
-      if (!mediaDocument) {
+      if (!media) {
         return res.status(404).json({ message: 'Media information not found' });
       }
 
-      mediaDocument.image = mediaDocument.image ? decryptBin(mediaDocument.image) : null;
-      mediaDocument.video = mediaDocument.video ? decryptBin(mediaDocument.video) : null;
-      mediaDocument.audio = mediaDocument.audio ? decryptBin(mediaDocument.audio) : null;
-
-      const user = await User.findById(mediaDocument.userId).select('-password');
-      if (!user) {
-        return res.status(404).json({ message: 'User information not found' });
+      if(media.image){
+        let {image,iv} = media
+        let data = decryptBin(image,iv);
+        return res.status(200).json({
+          _id : media._id,
+          vaultId : media.vaultId,
+          userId : media.userId,
+          mediaName : media.mediaName,
+          image : data,
+          });
       }
-
-      const mediaInfo = {
-        media: mediaDocument,
-        user: user
-      };
-
-      res.json(mediaInfo);
+      else if(media.audio){
+        let {audio,iv} = media
+        let data = decryptBin(audio,iv);
+        return res.status(200).json({
+          _id : media._id,
+          vaultId : media.vaultId,
+          userId : media.userId,
+          mediaName : media.mediaName,
+          audio : data,
+          });
+      }
+      else{
+        let {video,iv} = media
+        let data = decryptBin(video,iv);
+        return res.status(200).json({
+          _id : media._id,
+          vaultId : media.vaultId,
+          userId : media.userId,
+          mediaName : media.mediaName,
+          video : data
+          });
+      }
     } catch (err) {
 
       res.status(500).json({ message: err.message });
@@ -72,10 +101,11 @@ class MediaVaultController {
 
 
   async mediaInfoSave(req, res) {
+    // console.log("files",req.files)
     const {image,video,audio} = req.files
     const vaultId = req.body.vaultId
     try {
-      console.log(req.body)
+      // console.log(req.files)
 
       // const existingVault = await MediaModel.findOne({vaultId: vaultId})
 
@@ -83,13 +113,13 @@ class MediaVaultController {
       //   return res.status(409).json({ message: 'Vault id already exists'})
       // }
       if(image !== undefined){
-        req.file = req.files.image[0]
+        req.file = req.files?.image[0]
       }
       else if(video!== undefined){
-        req.file = req.files.video[0]
+        req.file = req.files?.video[0]
       }
       else
-        req.file = req.files.audio[0]
+        req.file = req.files?.audio[0]
       if (!req.file) {
         return res.status(400).send({ message: 'No file uploaded' });
       }
@@ -99,7 +129,7 @@ class MediaVaultController {
         return res.status(400).send({ message: 'userId is required' });
       }
   
-      console.log('File received:', req.file); // Debugging log
+      // console.log('File received:', req.file); // Debugging log
   
       const fileBuffer = req.file.buffer;
       const fileName = req.file.originalname;
@@ -126,13 +156,19 @@ class MediaVaultController {
   
       await newMediaVault.save();
   
-      console.log('File uploaded successfully:', {
-        fileName: fileName,
-        fileSize: req.file.size,
-        mimeType: mimeType,
-      });
-  
-      res.status(200).send({ message: 'File uploaded successfully', file: req.file });
+      // console.log('File uploaded successfully:', {
+      //   fileName: fileName,
+      //   fileSize: req.file.size,
+      //   mimeType: mimeType,
+      // });
+
+      return res.status(200).json({
+        _id : newMediaVault._id,
+        vaultId : vaultId,
+        userId : userId,
+        mediaName : fileName,
+        [mediaType] : req.file.buffer,
+      })
     } catch (err) {
       console.error('Error handling file upload:', err);
       res.status(500).send({ message: 'Server error' });

@@ -10,12 +10,14 @@ import Signup from '../components/Signup'
 import Footer from '../components/Footer'
 
 const Modal = ({ isOpen, onClose, children }) => {
+  const [hadAccount,setHadAccount] = useState(true);
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex flex-col items-center justify-center">
       
-          <Login />
+          {hadAccount ? <Login hadAccount = {hadAccount} setHadAccount = {setHadAccount} /> : <Signup hadAccount={hadAccount} setHadAccount={setHadAccount} />}
+          
           <button onClick={onClose} className="text-[2.5rem] p-0 my-2 aspect-square flex items-center justify-center bg-red-500 rounded-full border-none outline-none text-white">&times;</button>
       </div>
     ,
@@ -87,15 +89,15 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-[3rem] font-semibold mb-8">Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="p-6 bg-slate-700 text-slate-100 rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  text-slate-100 rounded-lg shadow-black shadow-md">
               <h3 className="text-xl  font-semibold mb-4">Robust Encryption</h3>
               <p className='font-thin'>SecureGuard uses industry-leading encryption technology to protect your data.</p>
             </div>
-            <div className="p-6 bg-slate-700 text-slate-100 rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700 text-slate-100 rounded-lg shadow-black shadow-md">
               <h3 className="text-xl  font-semibold mb-4">User-Friendly Interface</h3>
               <p className='font-thin'>Easily organize and access your files with our intuitive platform.</p>
             </div>
-            <div className="p-6 bg-slate-700 text-slate-100 rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700 text-slate-100 rounded-lg shadow-black shadow-md">
               <h3 className="text-xl  font-semibold mb-4">Real-Time Monitoring</h3>
               <p className='font-thin'>Stay informed with real-time monitoring and alerts for your data.</p>
             </div>
@@ -107,15 +109,15 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-semibold mb-8">Benefits</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  rounded-lg shadow-black shadow-md">
               <h3 className="text-xl font-semibold mb-4">Data Security</h3>
               <p className='font-thin'>Keep your sensitive information safe and secure from unauthorized access.</p>
             </div>
-            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  rounded-lg shadow-black shadow-md">
               <h3 className="text-xl font-semibold mb-4">Privacy Protection</h3>
               <p className='font-thin'>Your data privacy is our top priority, ensuring complete confidentiality.</p>
             </div>
-            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  rounded-lg shadow-black shadow-md">
               <h3 className="text-xl font-semibold mb-4">Ease of Use</h3>
               <p className='font-thin'>Our platform is designed for ease of use, making data management simple.</p>
             </div>
@@ -127,15 +129,15 @@ const LandingPage = () => {
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-semibold mb-8">What Our Users Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  rounded-lg shadow-black shadow-md">
               <p className="mb-4 font-thin">"SecureGuard has transformed the way we manage our data. It's incredibly secure and easy to use!"</p>
               <p className="font-bold">- Jane Doe</p>
             </div>
-            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  rounded-lg shadow-black shadow-md">
               <p className="mb-4 font-thin">"I feel much safer knowing that my sensitive information is protected by SecureGuard."</p>
               <p className="font-bold">- John Smith</p>
             </div>
-            <div className="p-6 bg-slate-700  rounded-lg shadow-lg">
+            <div className="p-6 border-2 border-slate-700  rounded-lg shadow-black shadow-md">
               <p className="mb-4 font-thin">"The best data protection service I've used. Highly recommend SecureGuard!"</p>
               <p className="font-bold">- Mary Johnson</p>
             </div>
