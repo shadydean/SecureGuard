@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import Login from '../components/Login'
 import sgLogo from '../assets/sgLogo.jpg'
+import temp from '../assets/temp.png'
 import file from '../assets/file.png'
 import { AuthContext } from '../context/Auth'
 import { Navigate } from 'react-router-dom'
@@ -80,7 +81,7 @@ const LandingPage = () => {
           </section>
           {/* right  */}
           <section className='flex-1 flex justify-center items-center drop-shadow-2xl z-0'>
-            <img src={file} className='drop-shadow-2xl' />
+            <img src={temp} className='drop-shadow-3xl' />
           </section>
         </section>
 

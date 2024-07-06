@@ -23,7 +23,7 @@ const saveUser = async (req, res) => {
         }
 
         console.log(`Creating new user with email: ${email}`);
-
+        name = name.trimStart()
         user = new User({ email, password, mobilenumber, active: false,name});
         try {
             const salt = await bcrypt.genSalt(10);

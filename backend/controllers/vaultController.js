@@ -83,6 +83,7 @@ class VaultController {
   async updateVault(req,res){
     try {
         const { name,vaultType } = req.body;
+        const vaultId = req.params.id;
         let vault;
         if(vaultType === "media"){
             vault = await MediaVaultModel.findOne({name : name,userId : req.userId })
@@ -90,12 +91,20 @@ class VaultController {
         else
             vault = await BankVaultModel.findOne({ name : name,userId : req.userId });
 
-        if(!vault){
-            return res.status(404).json({ message: "Vault not found" });
+        if(vault){
+            return res.status(400).json({ message: "Vault Name already exists" });
         }
-        vault.name = name;
-        await vault.save();
-        res.status(200).json({ message: 'Vault updated successfully' });
+
+        let currVault;
+        if(vaultType === "media"){
+            currVault = await MediaVaultModel.findOne({ _id : vaultId,userId : req.userId});
+        }
+        else {
+            currVault = await BankVaultModel.findOne({_id : vaultId, userId : req.userId})
+        }
+        currVault.name = name;
+        await currVault.save();
+        res.status(200).json(currVault);
         }
         catch (error) {
             console.log(error)
