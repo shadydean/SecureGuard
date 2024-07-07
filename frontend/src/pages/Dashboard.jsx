@@ -5,8 +5,9 @@ import { Buffer } from "buffer";
 import SideBar from "../components/SideBar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { VaultContext } from "../context/Vaults";
+import MediaSection from "../components/MediaSection";
 
-const MediaContent = lazy(() => import("../components/MediaContent"));
+const MediaContent = lazy(() => import("../components/MediaSection"));
 
 const TopBar = ({ currVault,user,userDispatch }) => {
   const [isModelOpen,setIsModelOpen] = useState(false);
@@ -223,21 +224,7 @@ const Dashboard = () => {
       <section className="w-5/6 bg-slate-900 flex flex-col  text-black p-8 overflow-y-auto">
         <TopBar currVault={currVault} user={user} userDispatch={userDispatch} />
         <UploadBar currVault={currVault} handleUpload={handleUpload} />
-        <div className="flex h-full flex-wrap items-start">
-          {loading ? (
-            <LoadingSpinner />
-          ) : (
-            <Suspense fallback={<LoadingSpinner />}>
-              {content.length > 0 ? (
-                content.map((media) => (
-                  <MediaContent key={media._id} media={media} />
-                ))
-              ) : (
-                <h1 className="text-white">No content</h1>
-              )}
-            </Suspense>
-          )}
-        </div>
+        <MediaSection content={content} setContent={setContent} loading={loading} />
       </section>
     </div>
   );

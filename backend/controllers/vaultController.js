@@ -115,20 +115,22 @@ class VaultController {
 
   async deleteVault(req,res){
     try {
-        const { id,vaultType } = req.params;
+        const vaultId = req.params.id;
+        const {vaultType} = req.body;
+        console.log("info -> ", vaultId, " , vaultType -> ", vaultType)
         if(vaultType === "media"){
-            const vault = await MediaVaultModel.findById(id);
+            const vault = await MediaVaultModel.findOne({_id : vaultId, userId : req.userId});
             if(!vault){
                 return res.status(404).json({ message: 'Vault not found' });
             }
-            await MediaVaultModel.deleteOne({ _id: id });
+            await MediaVaultModel.deleteOne({ _id: vaultId });
         }
         else {
-            const vault = await BankVaultModel.findById(id);
+            const vault = await BankVaultModel.findOne({_id : vaultId, userId : req.userId});
         if(!vault){
             return res.status(404).json({ message: 'Vault not found' });
         }
-        await BankVaultModel.deleteOne({ _id: id });
+        await BankVaultModel.deleteOne({ _id: vaultId });
         }
         
         res.status(200).json({ message: 'Vault deleted successfully' });

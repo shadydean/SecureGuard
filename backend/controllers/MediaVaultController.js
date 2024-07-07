@@ -183,7 +183,9 @@ class MediaVaultController {
       }
 
       const updateData = req.body;
-
+      // if(updateData.mediaName){
+      //   idd.mediaName = updateData.mediaName;
+      // }
       if (updateData.image) {
         updateData.image = encryptBin(Buffer.from(updateData.image, 'binary'));
       }
@@ -205,12 +207,12 @@ class MediaVaultController {
 
   async mediaInfoDelete(req, res) {
     try {
-      const idd = await MediaModel.findOne({ mediaName: req.params.id });
+      const idd = await MediaModel.findOne({ _id: req.params.id,userId : req.userId });
       if (!idd) {
         return res.status(404).json({ message: 'Media information not found' });
       }
 
-      const deletedMediaInfo = await MediaModel.findByIdAndDelete(idd._id);
+      const deletedMediaInfo = await MediaModel.findByIdAndDelete(req.params.id);
       if (!deletedMediaInfo) return res.status(404).json({ message: 'Media information not found' });
       res.json({ message: 'Media information deleted successfully' });
     } catch (err) {

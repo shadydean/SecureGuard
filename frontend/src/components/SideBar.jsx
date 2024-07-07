@@ -67,56 +67,29 @@ const Bank = ({isBank,user,setIsModalOpen}) => {
     )
 }
 
-const VaultModel = ({vault,isVaultModifying,setIsVaultModifying,setVaultName},vaultType) => {
-
-  async function deleteVault({vault},vaultType){
-    try {
-      setIsVaultModifying(true)
-      const response = await fetch(`http://localhost:4321/api/vault/${vault._id}`,{
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token" : user
-        },
-        body : {
-          id : vault._id,
-          vaultType : vaultType
-        }
-
-      })
-
-      if(response.ok){
-        const data = await response.json()
-        console.log(data)
-      }
-      setIsVaultModifying(false)
-    }catch(err){
-      console.log(err)
-    }
-  }
-
+const VaultModel = ({vault,isVaultModifying,setIsVaultModifying,setVaultName,deleteVault,vaultType}) => {
   return (
     <div className='absolute -right-[95%] top-4 mt-2 z-10 w-48 text-center text-black bg-white rounded-md shadow-lg p-2'>
             <ul>
-              <button to={'/profile'}
+              <button
                 className='px-4 py-2 block w-full hover:bg-gray-200 cursor-pointer'
                 onClick={() => {setIsVaultModifying(true); setVaultName(vault.name)}}
               >
                 Rename
               </button>
-              <button to={'/profile'}
+              <button
                 className='px-4 py-2 block w-full bg-red-500 rounded-xl text-white hover:bg-red-600 cursor-pointer'
                 disabled={isVaultModifying}
-                onClick={deleteVault}
+                onClick={() => deleteVault(vaultType)}
               >
-                Delete
+                {isVaultModifying ? "Deleting..." : "Delete"}
               </button>
             </ul>
           </div>
   )
 }
 
-const VaultComponent = ({id,vault,isVaultModifying,renameVault,setIsVaultModifying,activeVaultId,setActiveVaultId,setVaultName,vaultName,vaultType}) => {
+const VaultComponent = ({id,vault,isVaultModifying,renameVault,deleteVault,setIsVaultModifying,activeVaultId,setActiveVaultId,setVaultName,vaultName,vaultType}) => {
   return (
     <div className={` ${(id === vault._id) ? "bg-gray-700" : ""} relative flex items-center hover:bg-gray-700 group`}>
                       <FcFolder className='mr-2 text-2xl' />
@@ -124,7 +97,7 @@ const VaultComponent = ({id,vault,isVaultModifying,renameVault,setIsVaultModifyi
                       <input type="text" className="w-[70%] border-[1px] py-2 outline-none bg-transparent text-white" value={vaultName} onChange={(e) => setVaultName(e.target.value)}
                         onKeyDown={(e) => {
                           if(e.key === 'Enter') {
-                           return renameVault(activeVaultId,vaultName,vaultType)
+                           return renameVault(activeVaultId,vaultName,vaultType,setActiveVaultId)
                           }
 
                           return;
@@ -142,6 +115,7 @@ const VaultComponent = ({id,vault,isVaultModifying,renameVault,setIsVaultModifyi
                       isVaultModifying={isVaultModifying}
                       setIsVaultModifying={setIsVaultModifying}
                       vaultType={vaultType}
+                      deleteVault={deleteVault}
                     />
                   )}
                       </div>
@@ -149,7 +123,7 @@ const VaultComponent = ({id,vault,isVaultModifying,renameVault,setIsVaultModifyi
 }
 
 const SideBar = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); //for vault creation
     const [isVaultModifying,setIsVaultModifying] = useState(false);
     const [vaultName,setVaultName] = useState("")
     const [activeVaultId,setActiveVaultId] = useState(null)
@@ -209,9 +183,38 @@ const SideBar = () => {
     
           if(response.ok){
             const data = await response.json()
+            dispatch({type : 'UPDATE', payload : {_id : data._id, name : data.name,isBank : (vaultType === "bank")}})
             console.log(data)
           }
           setIsVaultModifying(false)
+          setActiveVaultId(null)
+        }catch(err){
+          console.log(err)
+        }
+      }
+
+      async function deleteVault(vaultType){
+        try {
+          setIsVaultModifying(true)
+          const response = await fetch(`http://localhost:4321/api/vault/${activeVaultId}`,{
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "x-auth-token" : user
+            },
+            body : JSON.stringify({
+              vaultType : vaultType
+            })
+    
+          })
+    
+          if(response.ok){
+            const data = await response.json()
+            dispatch({type : 'DELETE',payload : {_id : activeVaultId,isBank : (vaultType === "bank")}})
+            console.log(data)
+          }
+          setIsVaultModifying(false)
+          setActiveVaultId(null)
         }catch(err){
           console.log(err)
         }
@@ -235,7 +238,8 @@ const SideBar = () => {
             <section>
                 <ul className='font-normal text-[1rem] pl-6'>
 
-                {vaults && (vaults.mediaVaults.map(vault => <VaultComponent key={vault._id} vaultType="media" activeVaultId={activeVaultId} setActiveVaultId={setActiveVaultId} renameVault={renameVault} isVaultModifying={isVaultModifying} vaultName={vaultName} setIsVaultModifying={setIsVaultModifying} vault={vault} id={id} setVaultName={setVaultName} />
+                {vaults && (vaults.mediaVaults.map(vault => 
+                    <VaultComponent key={vault._id} vaultType="media" deleteVault={deleteVault} activeVaultId={activeVaultId} setActiveVaultId={setActiveVaultId} renameVault={renameVault} isVaultModifying={isVaultModifying} vaultName={vaultName} setIsVaultModifying={setIsVaultModifying} vault={vault} id={id} setVaultName={setVaultName} />
                   ))
                 
                  }
@@ -254,7 +258,7 @@ const SideBar = () => {
                 <ul className='font-normal text-[1rem] pl-6'>
 
                 {vaults && (vaults.bankVaults.map(vault => 
-                    <VaultComponent key={vault._id} vaultType="bank" activeVaultId={activeVaultId} setActiveVaultId={setActiveVaultId} renameVault={renameVault} isVaultModifying={isVaultModifying} setIsVaultModifying={setIsVaultModifying} vault={vault} id={id} setVaultName={setVaultName} />
+                    <VaultComponent key={vault._id} vaultType="bank" deleteVault={deleteVault} activeVaultId={activeVaultId} setActiveVaultId={setActiveVaultId} renameVault={renameVault} isVaultModifying={isVaultModifying} vaultName={vaultName} setIsVaultModifying={setIsVaultModifying} vault={vault} id={id} setVaultName={setVaultName} />
                   ))
                 
                  }

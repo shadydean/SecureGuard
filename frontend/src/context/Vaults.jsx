@@ -22,7 +22,42 @@ export const vaultReducer = (state,action) => {
             return {vaults : vaults}
         }
 
-        case 'DELETE' : 
+        case 'UPDATE' : {
+            let vaults;
+            console.log(state)
+            if(action.payload.isBank){
+                vaults = {mediaVaults : [...state.vaults.mediaVaults], bankVaults : state.vaults.bankVaults.map(vault => {
+                    if(vault._id !== action.payload._id) return vault
+                    else {
+                        return {...vault,name : action.payload.name}
+                    }
+                })}
+            }
+            else{
+                vaults = {bankVaults : [...state.vaults.bankVaults], mediaVaults : state.vaults.mediaVaults.map(vault => {
+                    if(vault._id !== action.payload._id) return vault
+                    else {
+                        return {...vault,name : action.payload.name}
+                    }
+            })
+            }}
+
+            localStorage.setItem("vaults",JSON.stringify(vaults))
+            return {vaults : vaults}
+        }
+
+        case 'DELETE' : {
+            let vaults;
+            if(action.payload.isBank){
+                vaults = {mediaVaults : [...state.vaults.mediaVaults], bankVaults : state.vaults.bankVaults.filter(vault => vault._id !== action.payload._id)}
+            }
+            else {
+                vaults = {bankVaults : [...state.vaults.bankVaults], mediaVaults : state.vaults.mediaVaults.filter(vault => vault._id !== action.payload._id)}
+            }
+            return {vaults : vaults}  
+        }
+
+        case 'CLEAR' : 
             return {vaults : null}
 
         default : 
