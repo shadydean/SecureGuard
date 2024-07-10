@@ -177,7 +177,7 @@ class MediaVaultController {
 
   async mediaInfoEditSave(req, res) {
     try {
-      const idd = await MediaModel.findOne({ mediaName: req.params.id });
+      const idd = await MediaModel.findOne({ _id: req.params.id });
       if (!idd) {
         return res.status(404).json({ message: 'Media information not found' });
       }
@@ -199,7 +199,7 @@ class MediaVaultController {
       const updatedMediaInfo = await MediaModel.findByIdAndUpdate(idd._id, updateData, { new: true });
 
       if (!updatedMediaInfo) return res.status(404).json({ message: 'Media information not found' });
-      res.json(updatedMediaInfo);
+      res.status(200).json(updatedMediaInfo);
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
@@ -207,7 +207,7 @@ class MediaVaultController {
 
   async mediaInfoDelete(req, res) {
     try {
-      const idd = await MediaModel.findOne({ _id: req.params.id,userId : req.userId });
+      const idd = await MediaModel.findOne({ _id: req.params.id });
       if (!idd) {
         return res.status(404).json({ message: 'Media information not found' });
       }

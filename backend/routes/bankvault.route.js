@@ -8,8 +8,8 @@ bankRoute.use(express.urlencoded({ extended: true }))
 const{getBankInfo,getBankInfoById,bankInfoEditSave,bankInfoSave,bankInfoDelete}=require('../controllers/BankVaultController')
 bankRoute.use(auth);
 
-bankRoute.get('/',getBankInfo)
-bankRoute.get('/:id',getBankInfoById)
+bankRoute.get('/:id',getBankInfo)
+// bankRoute.get('/:id',getBankInfoById)
 bankRoute.put('/:id',bankInfoEditSave)
 bankRoute.post('/',bankInfoSave)
 bankRoute.delete('/:id',bankInfoDelete)

@@ -102,6 +102,7 @@ const VaultComponent = ({id,vault,isVaultModifying,renameVault,deleteVault,setIs
 
                           return;
                         }}
+                        required
                     />
                       : 
                       <Link to={`/dashboard/${vault._id}`} className='block my-2'>{vault.name}</Link>}

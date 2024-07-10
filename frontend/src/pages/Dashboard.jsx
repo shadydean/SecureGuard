@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useState, Suspense, lazy } from "react";
+import React, { useContext, useEffect, useState, lazy } from "react";
 import { AuthContext } from "../context/Auth";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Buffer } from "buffer";
 import SideBar from "../components/SideBar";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { VaultContext } from "../context/Vaults";
-import MediaSection from "../components/MediaSection";
+import BankSection from "../components/BankSection";
+import Modal from "../components/Modal"
 
-const MediaContent = lazy(() => import("../components/MediaSection"));
+const MediaSection = lazy(() => import("../components/MediaSection"));
+
+
 
 const TopBar = ({ currVault,user,userDispatch }) => {
   const [isModelOpen,setIsModelOpen] = useState(false);
@@ -57,7 +58,7 @@ const TopBar = ({ currVault,user,userDispatch }) => {
   );
 };
 
-const UploadBar = ({ currVault, handleUpload }) => {
+const UploadBar = ({ currVault, handleUpload,setBankModelOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const onFileChange = (event) => {
@@ -69,7 +70,7 @@ const UploadBar = ({ currVault, handleUpload }) => {
       setSelectedFile(null); // Clear the selected file after upload
     }
   };
-
+  
   return (
     <div className="flex justify-between text-white mb-4">
       <h2 className="font-semibold text-2xl">
@@ -86,13 +87,25 @@ const UploadBar = ({ currVault, handleUpload }) => {
           className="hidden"
           id="file-upload"
         />
-        <button
-          type="button"
-          onClick={() => document.getElementById("file-upload").click()}
-          className="bg-white text-slate-800 ml-2 px-3 py-2 rounded-md font-semibold"
-        >
-          Upload
-        </button>
+        {
+          (currVault && (currVault[0] === "Media Vaults")) ? 
+          
+          <button
+            type="button"
+            onClick={() => document.getElementById("file-upload").click()}
+            className="bg-white text-slate-800 ml-2 px-3 py-2 rounded-md font-semibold"
+          >
+            Upload
+          </button>
+          :
+          <button
+            type="button"
+            onClick={() => setBankModelOpen(true)}
+            className="bg-white text-slate-800 ml-2 px-3 py-2 rounded-md font-semibold"
+          >
+            New info
+          </button>
+        }
       </div>
     </div>
   );
@@ -100,23 +113,82 @@ const UploadBar = ({ currVault, handleUpload }) => {
 
 const Dashboard = () => {
   const { user,dispatch : userDispatch } = useContext(AuthContext);
+  const [bankModelOpen,setBankModelOpen] = useState(false);
   const [content, setContent] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [bankContent,setBankContent] = useState([])
+  const [loading, setLoading] = useState(false);
   const { vaults, dispatch } = useContext(VaultContext);
   const navigate = useNavigate();
   const { id } = useParams();
   const [currVault, setCurrVault] = useState(["Media Vaults", ""]);
-  const url = `http://localhost:4321/api/media/?vaultId=${id}`;
 
-  function getCurrVault() {
-    for (let vault of vaults.mediaVaults) {
-      if (vault._id === id) setCurrVault(["Media Vaults", vault.name]);
-    }
 
-    for (let vault of vaults.bankVaults) {
-      if (vault._id === id) setCurrVault(["Bank Vaults", vault.name]);
+  const fetchWithCache = async (cacheName,url) => {
+    const cache = await caches.open(cacheName);
+    // Try to fetch from cache
+    const cachedResponse = await cache.match(url);
+
+    if (cachedResponse) {
+      // Update the cache in the background
+      fetch(url,{
+        headers : {
+          "x-auth-token": user,
+        }
+      }).then((response) => {
+        if (response.ok) {
+          cache.put(url, response);
+        }
+      });
+      return cachedResponse; // Return the cached response immediately
+    } else {
+      // If not in cache, fetch from network
+      const networkResponse = await fetch(url, {
+        headers: {
+          "x-auth-token": user,
+        }
+      });
+      if (networkResponse.ok) {
+        cache.put(url, networkResponse.clone());
+      }
+      return networkResponse;
     }
-  }
+  };
+
+  useEffect(() => {
+  
+    const fetchVault = async (cacheName,url) => {
+      setLoading(true);
+      const res = await fetchWithCache(cacheName,url);
+      const data = await res.json();
+      if (res.ok) {
+        if(cacheName === "media-cache")
+          setContent(data);
+        else
+          setBankContent(data);
+      } else {
+        console.log("Something went wrong");
+      }
+      setLoading(false);
+    };
+
+    if (!user) navigate("/");
+    else{
+      let cacheName = "media-cache",url = `http://localhost:4321/api/media/?vaultId=${id}`;
+      for (let vault of vaults.mediaVaults) {
+        if (vault._id === id) {setCurrVault(["Media Vaults", vault.name]);cacheName  = "media-cache";url = `http://localhost:4321/api/media/?vaultId=${id}`;};
+      }
+  
+      for (let vault of vaults.bankVaults) {
+        if (vault._id === id) {setCurrVault(["Bank Vaults", vault.name]); cacheName = "bank-cache";url = `http://localhost:4321/api/bank/${id}`;};
+      }
+      fetchVault(cacheName,url);
+    } 
+    // const intervalId = setInterval(() => {
+    //   fetchVault();
+    // }, 150000); // 300000 ms = 5 minutes
+
+    // return () => clearInterval(intervalId);
+  }, [user, id]);
 
   const handleUpload = async (file) => {
     // console.log(file)
@@ -144,7 +216,7 @@ const Dashboard = () => {
       // console.log(newMedia)
       setContent([...content, newMedia]);
       const cache = await caches.open("media-cache");
-      
+      let url = `http://localhost:4321/api/media/?vaultId=${id}`
       cache.match(url).then((cachedResponse) => {
         if (cachedResponse) {
           cachedResponse.json().then((cachedData) => {
@@ -161,70 +233,19 @@ const Dashboard = () => {
     // setLoading(false);
   };
 
-  useEffect(() => {
-    const fetchWithCache = async () => {
-      const cacheName = "media-cache";
-      const cache = await caches.open(cacheName);
-
-      // Try to fetch from cache
-      const cachedResponse = await cache.match(url);
-
-      if (cachedResponse) {
-        // Update the cache in the background
-        fetch(url,{
-          headers : {
-            "x-auth-token": user,
-          }
-        }).then((response) => {
-          if (response.ok) {
-            cache.put(url, response);
-          }
-        });
-        return cachedResponse; // Return the cached response immediately
-      } else {
-        // If not in cache, fetch from network
-        const networkResponse = await fetch(url, {
-          headers: {
-            "x-auth-token": user,
-          },
-        });
-        if (networkResponse.ok) {
-          cache.put(url, networkResponse.clone());
-        }
-        return networkResponse;
-      }
-    };
-
-    const fetchVault = async () => {
-      setLoading(true);
-      const res = await fetchWithCache();
-      const data = await res.json();
-      if (res.ok) {
-        setContent(data);
-      } else {
-        console.log("Something went wrong");
-      }
-      setLoading(false);
-    };
-
-    if (!user) navigate("/");
-    else fetchVault();
-    getCurrVault();
-
-    // const intervalId = setInterval(() => {
-    //   fetchVault();
-    // }, 150000); // 300000 ms = 5 minutes
-
-    // return () => clearInterval(intervalId);
-  }, [user, id]);
-
   return (
     <div className="flex h-screen">
       <SideBar />
       <section className="w-5/6 bg-slate-900 flex flex-col  text-black p-8 overflow-y-auto">
         <TopBar currVault={currVault} user={user} userDispatch={userDispatch} />
-        <UploadBar currVault={currVault} handleUpload={handleUpload} />
-        <MediaSection content={content} setContent={setContent} loading={loading} />
+        <UploadBar currVault={currVault} handleUpload={handleUpload} setBankModelOpen={setBankModelOpen} />
+        {(currVault && (currVault[0] === "Media Vaults"))?
+          <MediaSection content={content} setContent={setContent} loading={loading} />
+          : <BankSection content={bankContent} setContent={setBankContent} loading={loading} />
+        }
+
+        <Modal isOpen={bankModelOpen} content={content} setBankContent={setBankContent} setBankModelOpen={setBankModelOpen} method="post" />
+        
       </section>
     </div>
   );

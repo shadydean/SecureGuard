@@ -31,12 +31,6 @@ app.get('/', (req, res) => {
     res.send('API is running');
 });
 
-app.get('/dinesh', (req, res) => {
-    res.send("Life has no ctrl z")
-    res.send('API is running');
-});
-
-
 // Set base endpoint for all routes
 app.use('/api/login', loginRoute);
 app.use('/api/signup', signupRoute);

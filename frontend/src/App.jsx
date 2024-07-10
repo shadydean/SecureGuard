@@ -6,6 +6,7 @@ import Temp from './pages/Temp'
 import PrivateRoute from './pages/PrivateRoute'
 import Footer from './components/Footer'
 import Dashboard from './pages/Dashboard'
+import Profile from './pages/Profile'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path='/home' element={<Home />} />
                 <Route path='/dashboard/:id' element = {<Dashboard />} />
+                <Route path='/profile' element={<Profile />} />
               <Route path='/temp' element={<Temp />}/>
             </Route>
           </Routes>

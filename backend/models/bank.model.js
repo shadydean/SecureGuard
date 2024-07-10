@@ -9,6 +9,7 @@ const bankSchema = new mongoose.Schema({
   IFSC: { type: String, required: true },
   userName: { type: String, required: true},
   password: { type: String, required: true },
+  iv: { type: String },
 });
 
 const BankModel = mongoose.model("Bank", bankSchema);
