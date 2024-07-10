@@ -7,8 +7,9 @@ import sgLogo from '../assets/sgLogo.jpg'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { VaultContext } from '../context/Vaults';
 import { AuthContext } from '../context/Auth';
+import Bank from './Bank';
 
-const Modal = ({ isOpen, onClose, children }) => {
+export const Modal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
   
     return ReactDOM.createPortal(
@@ -22,50 +23,7 @@ const Modal = ({ isOpen, onClose, children }) => {
     );
   };
 
-const Bank = ({isBank,user,setIsModalOpen}) => {
 
-    const [name,setName] = useState("")
-    const [isLoading,setIsLoading] = useState(false)
-    const {vaults,dispatch} = useContext(VaultContext)
-    const nav = useNavigate()
-    
-
-    async function createVault(){
-        setIsLoading(true)
-        const response = await fetch('http://localhost:4321/api/vault', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-auth-token' : user
-                },
-                body: JSON.stringify({
-                    name: name,
-                    vaultType: (isBank ? "bank" : "media")
-                })
-        })
-        if(response.status === 201){
-            const data = await response.json()
-            dispatch({type : "ADD",payload : {data : data, isBank : isBank}})
-            setIsModalOpen(false)
-            return nav(`/dashboard/${data._id}`)
-        }
-        setIsLoading(false)
-    }
-
-    return (
-        <>
-        <h2 className="text-2xl font-bold mb-4">Create Vault</h2>
-        <form>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Vault Name</label>
-            <input type="email" id="email" value={name} onChange={(e) => setName(e.target.value)} name="email" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
-          </div>
-
-          <button type="button" onClick={createVault} disabled={isLoading} className="w-full bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">{isLoading ? "Creating" : "Create"}</button>
-        </form>
-        </>
-    )
-}
 
 const VaultModel = ({vault,isVaultModifying,setIsVaultModifying,setVaultName,deleteVault,vaultType}) => {
   return (
@@ -82,7 +40,7 @@ const VaultModel = ({vault,isVaultModifying,setIsVaultModifying,setVaultName,del
                 disabled={isVaultModifying}
                 onClick={() => deleteVault(vaultType)}
               >
-                {isVaultModifying ? "Deleting..." : "Delete"}
+                Delete
               </button>
             </ul>
           </div>
@@ -131,6 +89,7 @@ const SideBar = () => {
     const [isBank,setIsBank] = useState(true);
     const {vaults,dispatch} = useContext(VaultContext)
     const {user} = useContext(AuthContext)
+    const nav = useNavigate()
     const { id } = useParams();
 
     useEffect(() => {
@@ -212,6 +171,8 @@ const SideBar = () => {
           if(response.ok){
             const data = await response.json()
             dispatch({type : 'DELETE',payload : {_id : activeVaultId,isBank : (vaultType === "bank")}})
+            if(activeVaultId === id)
+              nav("/home")
             console.log(data)
           }
           setIsVaultModifying(false)

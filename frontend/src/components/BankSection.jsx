@@ -93,9 +93,36 @@ const BankContent = ({content,setContent,selectedBank,setSelectedBank,bank}) => 
     )
 }
 
-const BankSection = ({content,setContent,loading}) => {
+const NoBank = ({setBankModelOpen}) => {
+  return (
+    <div className='w-full h-full border-2 border-dashed flex items-center justify-center border-white'>
+      <div className="flex flex-col items-center justify-center text-white space-y-4">
+        <h1 className='text-[2.8rem]'>Your vault is empty.</h1>
+        <h3 className='text-2xl font-light text-slate-400'>Try adding bank info...</h3>
+        <button type="button"
+            onClick={() => setBankModelOpen(true)} className='px-3 py-2 bg-gray-200 hover:bg-gray-400 text-slate-900 rounded-lg'>New info</button>
+      </div>
+    </div>
+  )
+}
+
+const BankWrapper = ({content,selectedBank,setSelectedBank,setBankModelOpen,setContent}) => {
+  return (
+    <>
+    { content.length > 0 ? (
+      content.map((bank) => (
+        <BankContent content = {content} selectedBank={selectedBank} setSelectedBank={setSelectedBank} setContent={setContent} key={bank._id} bank={bank} />
+      ))
+    ) : (
+      <NoBank setBankModelOpen={setBankModelOpen} />
+    )}
+    </>
+  )
+}
+
+const BankSection = ({search,searchContent,content,setContent,loading}) => {
   const [selectedBank,setSelectedBank] = useState(null)
-    // console.log(content)
+  const [bankModelOpen,setBankModelOpen] = useState(false)
   return (
     <div className="flex h-full flex-wrap items-start">
           {loading ? (
@@ -103,15 +130,16 @@ const BankSection = ({content,setContent,loading}) => {
           ) : 
           (
             <Suspense fallback={<LoadingSpinner />}>
-              {content.length > 0 ? (
-                content.map((bank) => (
-                  <BankContent content = {content} selectedBank={selectedBank} setSelectedBank={setSelectedBank} setContent={setContent} key={bank._id} bank={bank} />
-                ))
-              ) : (
-                <h1 className="text-white">No content</h1>
-              )}
+              {searchContent.length > 0 ? 
+              <BankWrapper content={searchContent} selectedBank={selectedBank} setSelectedBank={setSelectedBank} setBankModelOpen={setBankModelOpen} setContent={setContent} /> 
+              :
+              (search !== "") ? <div className='text-[3rem] text-slate-300 m-auto'> No Bank info found </div>
+              : 
+              <BankWrapper content={content} selectedBank={selectedBank} setSelectedBank={setSelectedBank} setBankModelOpen={setBankModelOpen} setContent={setContent} /> 
+            }
             </Suspense>
           )}
+          <Modal isOpen={bankModelOpen} content={content} setBankContent={setContent} setBankModelOpen={setBankModelOpen} method="post" />
         </div>
   )
 }

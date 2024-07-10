@@ -1,11 +1,24 @@
 // MediaContent.jsx
-import React, { Suspense, useContext, useState } from 'react';
+import React, { startTransition, Suspense, useContext, useState } from 'react';
 import { Buffer } from 'buffer';
 import { FcImageFile,FcVideoFile } from "react-icons/fc";
 import { RxDotsVertical } from "react-icons/rx";
 import LoadingSpinner from './LoadingSpinner';
 import { AuthContext } from '../context/Auth';
 import { useParams } from 'react-router-dom';
+
+const SkeletonLoader = () => {
+  return (
+    <div className="bg-gray-800 relative w-[25%] h-[35%] flex flex-col justify-evenly px-2 mr-2 mb-2 rounded-lg shadow-black shadow-md animate-pulse">
+      <div className="flex justify-between items-center px-4">
+        <div className="bg-gray-600 h-8 w-8 rounded-full"></div>
+        <div className="ml-2 bg-gray-600 h-6 w-3/5 rounded"></div>
+        <div className="bg-gray-600 h-6 w-6 rounded"></div>
+      </div>
+      <div className="bg-gray-600 h-[60%] w-[95%] mx-auto rounded-md"></div>
+    </div>
+  );
+};
 
 const MediaModel = ({deleteMedia,setRename,isLoading}) => {
 
@@ -58,7 +71,9 @@ const MediaContainer = ({media,children,content,setContent}) => {
 
       if(response.ok){
         let newContent = content.filter(m => m._id !== selectedMedia)
-        setContent(newContent)
+        startTransition(() => {
+          setContent(newContent);
+        });
         const cache = await caches.open("media-cache");
       
       cache.match(`http://localhost:4321/api/media/?vaultId=${id}`).then((cachedResponse) => {
@@ -75,6 +90,7 @@ const MediaContainer = ({media,children,content,setContent}) => {
       }
       setIsLoading(false)
       setSelectedMedia(null)
+      setIsModelOpen(false)
     }catch(err){
       console.log(err)
     }
@@ -114,6 +130,7 @@ const MediaContainer = ({media,children,content,setContent}) => {
         // console.log(data)
       }
       setRename(false)
+      setIsModelOpen(false)
       setSelectedMedia(null)
     }catch(err){
       console.log(err)
@@ -180,7 +197,7 @@ const MediaContent = ({ media,content,setContent }) => {
     const base64Audio = audioBuffer.toString('base64');
     const mimeType = media.audio.contentType || 'video/mp4';
     return (
-      <MediaContainer media={media}>  
+      <MediaContainer content={content} setContent={setContent} media={media}>  
         <audio controls className="w-[95%] aspect-video rounded-md" src={`data:${mimeType};base64,${base64Audio}`} preload='none' />
         </MediaContainer>
     );
@@ -190,21 +207,119 @@ const MediaContent = ({ media,content,setContent }) => {
   }
 };
 
-const MediaSection = ({content,setContent,loading}) => {
+const NoMedia = ({handleUpload}) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const onFileChange = (event) => {
+    event.preventDefault();
+    const file = event.target.files[0];
+    // console.log(file)
+    if (file) {
+      startTransition(() => {
+        handleUpload(file);
+      })
+      setSelectedFile(null); // Clear the selected file after upload
+    }
+  };
+
   return (
-    <div className="flex h-full flex-wrap items-start">
-          {loading ? (
-            <LoadingSpinner />
-          ) : 
-          (
-            <Suspense fallback={<LoadingSpinner />}>
-              {content.length > 0 ? (
+    <div className='w-full h-full border-2 border-dashed flex items-center justify-center border-white'>
+      <div className="flex flex-col items-center justify-center text-white space-y-4">
+        <h1 className='text-[2.8rem]'>Your vault is empty.</h1>
+        <h3 className='text-2xl font-light text-slate-400'>Try uploading media...</h3>
+        <input
+          type="file"
+          onChange={onFileChange}
+          className="hidden"
+          id="file-upload"
+        />
+        <button onClick={() => document.getElementById("file-upload").click()} className='px-3 py-2 bg-gray-200 hover:bg-gray-400 text-slate-900 rounded-lg'>Upload</button>
+      </div>
+    </div>
+  )
+}
+
+const MediaWrapper = ({content,handleUpload,setContent}) => {
+  // console.log("media wrapper -> ",content)
+  return (
+    <>
+    {content.length > 0 ? (
                 content.map((media) => (
                   <MediaContent content = {content} setContent={setContent} key={media._id} media={media} />
                 ))
               ) : (
-                <h1 className="text-white">No content</h1>
-              )}
+                <NoMedia handleUpload={handleUpload} />
+    )}
+    </>
+  )
+}
+
+const MediaSection = ({search,searchContent,content,setContent,loading}) => {
+
+  const handleUpload = async (file) => {
+    // console.log(file)
+    // setLoading(true);
+    const formData = new FormData();
+    const data = {
+      [file.type.split("/")[0]]: file,
+      vaultId: id,
+    };
+    formData.append(file.type.split("/")[0], file); // Append file under image, video, or audio key
+    formData.append("vaultId", id);
+
+    // console.log(data,formData)
+
+    const res = await fetch(`http://localhost:4321/api/media`, {
+      method: "POST",
+      headers: {
+        "x-auth-token": user,
+      },
+      body: formData,
+    });
+
+    if (res.ok) {
+      const newMedia = await res.json();
+      // console.log(newMedia)
+      startTransition(() => {
+        setContent([...content, newMedia]);
+      })
+      const cache = await caches.open("media-cache");
+      let url = `http://localhost:4321/api/media/?vaultId=${id}`
+      cache.match(url).then((cachedResponse) => {
+        if (cachedResponse) {
+          cachedResponse.json().then((cachedData) => {
+            cache.put(
+              url,
+              new Response(JSON.stringify([...cachedData, newMedia]))
+            );
+          });
+        }
+      });
+    } else {
+      console.log("Something went wrong");
+    }
+    // setLoading(false);
+  };
+
+  // console.log("media section -> ",searchContent)
+  return (
+    <div className="flex h-full flex-wrap items-start">
+          {loading ? (
+            <>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonLoader key={index} />
+            ))}
+          </>
+          ) : 
+          (
+            <Suspense fallback={<LoadingSpinner />}>
+              {searchContent.length > 0 ? 
+              <MediaWrapper handleUpload={handleUpload} content={searchContent} setContent={setContent} /> 
+              : 
+              (search !== "") ? <div className='text-[3rem] text-slate-300 m-auto'> No Media found </div>
+
+              : 
+              <MediaWrapper handleUpload={handleUpload} content={content} setContent={setContent} /> 
+            }
             </Suspense>
           )}
         </div>

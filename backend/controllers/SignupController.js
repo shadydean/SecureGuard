@@ -6,7 +6,7 @@ const User = require('../models/user.model');
 
 const saveUser = async (req, res) => {
     const {publicKey, privateKey} = await generateKeyPair();
-    const { email, password, mobilenumber,name } = req.body;
+    let { email, password, mobilenumber,name } = req.body;
 
     console.log('Request body:', req.body);
 
@@ -44,7 +44,7 @@ const saveUser = async (req, res) => {
         };
         const token = jwt.sign(payload, process.env.JWT_PVT_KEY);
         
-        res.header('auth-token', token).send({ token });
+        res.header('auth-token', token).send({ token,name });
         // res.status(201).send({ message: "User created successfully" });
 
     } catch (err) {

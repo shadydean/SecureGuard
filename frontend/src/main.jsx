@@ -6,11 +6,11 @@ import './index.css'
 import { Vaults } from './context/Vaults.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Auth>
       <Vaults>
         <App />
       </Vaults>
     </Auth>
-   </React.StrictMode>,
+  //  </React.StrictMode>,
 )

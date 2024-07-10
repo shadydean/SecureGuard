@@ -146,18 +146,30 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section className="py-20 text-white" id="contactUs" ref={contactUs}>
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
-          <p className="text-lg">For any inquiries or support, feel free to reach out to us.</p>
-          <div className="mt-8">
-            <button className="bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:bg-blue-600" onClick={() => scrollToSection(contactUs)}>
-              Get in Touch
-            </button>
+      {/*Footer*/}
+      <div id="contactUs" ref={contactUs} className="flex items-center justify-center min-h-[80dvh]">
+      <div className="bg-gray-800 shadow-lg shadow-black rounded-lg p-8 max-w-lg w-full">
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-700">Contact Us</h2>
+        <form>
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-slate-400 font-bold mb-2">Name:</label>
+            <input type="text" id="name" name="name" className="border bg-slate-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
           </div>
-        </div>
-      </section>
-      <Footer />
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-slate-400 font-bold mb-2">Email:</label>
+            <input type="email" id="email" name="email" className="border bg-slate-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="message" className="block text-slate-400 font-bold mb-2">Message:</label>
+            <textarea id="message" name="message" className="border bg-slate-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32 resize-none"></textarea>
+          </div>
+          <div className="flex items-center justify-between">
+            <button type="submit" onClick={()=>{alert('Your query is successfully submitted!')}} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <Footer />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <h2 className="text-2xl font-bold mb-4">Admin Login</h2>

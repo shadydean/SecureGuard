@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, lazy } from "react";
+import React, { useContext, useEffect, useState, lazy, startTransition } from "react";
 import { AuthContext } from "../context/Auth";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
@@ -8,55 +8,63 @@ import Modal from "../components/Modal"
 
 const MediaSection = lazy(() => import("../components/MediaSection"));
 
-
-
-const TopBar = ({ currVault,user,userDispatch }) => {
+const TopBar = ({ currVault,user,userDispatch,search,setSearch }) => {
   const [isModelOpen,setIsModelOpen] = useState(false);
+  const [name,setName] = useState("A")
 
   function onLogout(){
     userDispatch({type:"LOGOUT",payload:{}});
   }
 
+  useEffect(() => {
+    if(localStorage.getItem('name')){
+      setName(localStorage.getItem('name'))
+    }
+    else
+      setName("A")
+  },[user])
   return (
-    <div className="flex justify-between mb-4">
-      <input
-        className="w-[40%] h-12 rounded-md outline-none"
-        placeholder={`Search ${
-          currVault[1] === "" ? "" : `in ${currVault[1]}`
-        }`}
-        type="search"
-      />
-        <button onClick={() => setIsModelOpen(mod => !mod)} className="rounded-full bg-white w-12 h-12 font-semibold text-3xl">
-          A
-        </button>
-        {isModelOpen && (
-          <div className='absolute right-8 top-20 mt-2 w-48 text-center bg-white rounded-md shadow-lg p-2'>
-            <ul>
-              <Link to={'/profile'}
-                className='px-4 py-2 block hover:bg-gray-200 cursor-pointer'
-                // onClick={() => handleOptionClick('Profile')}
-              >
-                Profile
-              </Link>
-              <button
-                className='px-4 py-2 block mx-auto hover:bg-gray-200 cursor-pointer outline-none'
-                // onClick={() => handleOptionClick('Feedback')}
-              >
-                Feedback
-              </button>
-              <button
-                className='px-4 py-2 block mx-auto bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer outline-none'
-                onClick={onLogout}
-              >
-                Logout
-              </button>
-            </ul>
-          </div>
-        )}
-      
-    </div>
-  );
-};
+      <div className="flex justify-between mb-4">
+        <input
+          className="w-[40%] h-12 rounded-md outline-none"
+          placeholder={`Search ${
+            currVault[1] === "" ? "" : `in ${currVault[1]}`
+          }`}
+          onChange={(e) => setSearch(e.target.value)}
+          value={search}
+          type="text"
+        />
+          <button onClick={() => setIsModelOpen(mod => !mod)} className="rounded-full bg-white w-12 h-12 font-semibold text-3xl">
+            {name.charAt(0)}
+          </button>
+          {isModelOpen && (
+            <div className='absolute right-8 top-20 mt-2 w-48 text-center bg-white rounded-md shadow-lg p-2'>
+              <ul>
+                <Link to={'/profile'}
+                  className='px-4 py-2 block hover:bg-gray-200 cursor-pointer'
+                  // onClick={() => handleOptionClick('Profile')}
+                >
+                  Profile
+                </Link>
+                <button
+                  className='px-4 py-2 block mx-auto hover:bg-gray-200 cursor-pointer outline-none'
+                  // onClick={() => handleOptionClick('Feedback')}
+                >
+                  Feedback
+                </button>
+                <button
+                  className='px-4 py-2 block mx-auto bg-red-600 rounded text-white hover:bg-red-500 cursor-pointer outline-none'
+                  onClick={onLogout}
+                >
+                  Logout
+                </button>
+              </ul>
+            </div>
+          )}
+        
+      </div>
+    );
+}
 
 const UploadBar = ({ currVault, handleUpload,setBankModelOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -66,7 +74,9 @@ const UploadBar = ({ currVault, handleUpload,setBankModelOpen }) => {
     const file = event.target.files[0];
     // console.log(file)
     if (file) {
-      handleUpload(file);
+      startTransition(() => {
+        handleUpload(file);
+      })
       setSelectedFile(null); // Clear the selected file after upload
     }
   };
@@ -117,6 +127,8 @@ const Dashboard = () => {
   const [content, setContent] = useState([]);
   const [bankContent,setBankContent] = useState([])
   const [loading, setLoading] = useState(false);
+  const [search,setSearch] = useState("")
+  const [searchContent,setSearchContent] = useState([])
   const { vaults, dispatch } = useContext(VaultContext);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -157,18 +169,21 @@ const Dashboard = () => {
   useEffect(() => {
   
     const fetchVault = async (cacheName,url) => {
-      setLoading(true);
-      const res = await fetchWithCache(cacheName,url);
-      const data = await res.json();
-      if (res.ok) {
+      startTransition(async () => {
+
+        setLoading(true);
+        const res = await fetchWithCache(cacheName,url);
+        const data = await res.json();
+        if (res.ok) {
         if(cacheName === "media-cache")
           setContent(data);
         else
-          setBankContent(data);
-      } else {
+        setBankContent(data);
+    } else {
         console.log("Something went wrong");
       }
       setLoading(false);
+    })
     };
 
     if (!user) navigate("/");
@@ -190,6 +205,27 @@ const Dashboard = () => {
     // return () => clearInterval(intervalId);
   }, [user, id]);
 
+  useEffect(()=>{
+    let newContent = [];
+    if(currVault[0] === "Media Vaults"){
+      newContent = content.filter(rec => {
+        if(rec.mediaName.includes(search))
+            return rec;
+        return null;
+      })
+    }
+    else {
+      newContent = bankContent.filter(rec => {
+        if(rec.userName.includes(search))
+            return rec;
+        return null;
+      })
+    }
+    if(search === "") {setSearchContent([]);return ;}
+    else {
+      setSearchContent(newContent)
+    }
+  },[search,content,currVault])
   const handleUpload = async (file) => {
     // console.log(file)
     // setLoading(true);
@@ -214,7 +250,9 @@ const Dashboard = () => {
     if (res.ok) {
       const newMedia = await res.json();
       // console.log(newMedia)
-      setContent([...content, newMedia]);
+      startTransition(() => {
+        setContent([...content, newMedia]);
+      })
       const cache = await caches.open("media-cache");
       let url = `http://localhost:4321/api/media/?vaultId=${id}`
       cache.match(url).then((cachedResponse) => {
@@ -237,11 +275,11 @@ const Dashboard = () => {
     <div className="flex h-screen">
       <SideBar />
       <section className="w-5/6 bg-slate-900 flex flex-col  text-black p-8 overflow-y-auto">
-        <TopBar currVault={currVault} user={user} userDispatch={userDispatch} />
+        <TopBar currVault={currVault} user={user} userDispatch={userDispatch} search={search} setSearch={setSearch} />
         <UploadBar currVault={currVault} handleUpload={handleUpload} setBankModelOpen={setBankModelOpen} />
         {(currVault && (currVault[0] === "Media Vaults"))?
-          <MediaSection content={content} setContent={setContent} loading={loading} />
-          : <BankSection content={bankContent} setContent={setBankContent} loading={loading} />
+          <MediaSection search={search} searchContent={searchContent} content={content} setContent={setContent} loading={loading} />
+          : <BankSection search={search} searchContent = {searchContent} content={bankContent} setContent={setBankContent} loading={loading} />
         }
 
         <Modal isOpen={bankModelOpen} content={content} setBankContent={setBankContent} setBankModelOpen={setBankModelOpen} method="post" />

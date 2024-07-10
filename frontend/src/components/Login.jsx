@@ -19,6 +19,7 @@ export default function Login({hadAccount,setHadAccount}) {
       console.log("Login Success")
       localStorage.setItem("token",res.token)
       dispatch({type : 'LOGIN',payload : res.token})
+      localStorage.setItem('name',res.name)
       console.log(res);
     }
     else {

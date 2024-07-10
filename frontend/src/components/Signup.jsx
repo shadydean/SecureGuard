@@ -19,6 +19,7 @@ export default function Signup({hadAccount,setHadAccount}) {
       console.log("Signup Success")
       localStorage.setItem("token",res.token)
       dispatch({type : 'LOGIN',payload : res.token})
+      localStorage.setItem('name',res.name)
       console.log(res);
     }
     else {
@@ -30,7 +31,7 @@ export default function Signup({hadAccount,setHadAccount}) {
 
   return (
     <div className="w-[23rem] h-[24rem] shadow-lg shadow-black  p-4 bg-slate-800 ring-1 rounded-2xl ring-cyan-700 flex flex-col items-center justify-evenly">
-      <h1 className="text-3xl mb-4 text-white">Admin Login</h1> 
+      <h1 className="text-3xl mb-4 text-white">Create Account</h1> 
         <form onSubmit={handleSubmit(onSubmit)} className="w-2/3 space-y-6 flex flex-col">
           <input type="text" className="py-1 rounded-sm text-black" placeholder="Name" {...register("name")} />
           <input type="number" className="py-1 rounded-sm text-black" placeholder="Mobile number" {...register("mobilenumber")} />

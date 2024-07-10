@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const Profile = () => {
   const [userData,setUserData] = useState(null)
   const [isLoading,setIsLoading] = useState(false)
-  const {user} = useContext(AuthContext)
+  const {user,dispatch} = useContext(AuthContext)
   const nav = useNavigate()
 
   useEffect(() => {
@@ -52,7 +52,9 @@ const Profile = () => {
 
       if (response.ok) {
         // Handle account deletion (e.g., navigate to a goodbye page or logout)
-        nav("/goodbye");
+        dispatch({type : 'LOGOUT'})
+        nav("/");
+        
       } else {
         console.log("Failed to delete account");
       }
