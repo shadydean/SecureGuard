@@ -20,6 +20,7 @@ export default function Signup({hadAccount,setHadAccount}) {
       localStorage.setItem("token",res.token)
       dispatch({type : 'LOGIN',payload : res.token})
       localStorage.setItem('name',res.name)
+      localStorage.setItem('role',res.role)
       console.log(res);
     }
     else {

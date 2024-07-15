@@ -11,6 +11,7 @@ const auth = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_PVT_KEY);
         req.user = decoded.user;
         req.userId = decoded.user.id;
+        req.isActive = decoded.user.active;
         next();
     } catch (err) {
         res.status(400).json({ message: 'Token is not valid' });

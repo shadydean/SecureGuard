@@ -15,6 +15,7 @@ const Home = () => {
   const [vaultModelOpen,setVaultModelOpen] = useState(false)
   const [isBank,setIsBank] = useState(true)
   const [name,setName] = useState("A")
+  const [role,setRole] = useState("user")
   const {vaults,dispatch : vaultDispatch} = useContext(VaultContext)
   const [search,setSearch] = useState("")
   const nav = useNavigate()
@@ -55,6 +56,7 @@ const Home = () => {
   useEffect(() => {
     if(localStorage.getItem('name')){
       setName(localStorage.getItem('name'))
+      setRole(localStorage.getItem('role'))
     }
     else
       setName("A")
@@ -97,6 +99,13 @@ const Home = () => {
                   >
                     Profile
                   </Link>
+                  {(role === "admin") && <Link to={'/admin'}
+                  
+                  className='px-4 py-2 block hover:bg-gray-200 cursor-pointer'
+                  // onClick={() => handleOptionClick('Profile')}
+                >
+                  Admin
+                </Link>}
                   <button
                     className='px-4 py-2 block mx-auto hover:bg-gray-200 cursor-pointer outline-none'
                     // onClick={() => handleOptionClick('Feedback')}

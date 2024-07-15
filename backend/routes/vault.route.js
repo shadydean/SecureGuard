@@ -1,7 +1,9 @@
 const express = require('express');
 const vaultRoute = express.Router();
 const auth = require('../middleware/auth.middleware');
+const approved = require('../middleware/approved.middleware')
 vaultRoute.use(auth);
+vaultRoute.use(approved);
 
 const {createVault,deleteVault,updateVault,getAllVaults,getVaultInfoById} = require('../controllers/vaultController')
 

@@ -27,12 +27,13 @@ const login = async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
-                role: user.role
+                role: user.role,
+                active : user.active
             }
         };
         const token = jwt.sign(payload, process.env.JWT_PVT_KEY);
         
-        res.header('auth-token', token).send({ token,name : user.name });
+        res.header('auth-token', token).send({ token,name : user.name,role : user.role });
     } catch (err) {
         console.error('Error logging in:', err);
         res.status(500).send({ message: 'Error logging in' });

@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FcFolder } from "react-icons/fc";
 import { RxDotsHorizontal } from "react-icons/rx";
 import ReactDOM from 'react-dom'
@@ -170,6 +172,10 @@ const SideBar = () => {
     
           if(response.ok){
             const data = await response.json()
+            toast.success("Vault deleted successfully.",{
+              autoClose : 3000,
+            theme : 'dark',
+            })
             dispatch({type : 'DELETE',payload : {_id : activeVaultId,isBank : (vaultType === "bank")}})
             if(activeVaultId === id)
               nav("/home")
@@ -181,9 +187,9 @@ const SideBar = () => {
           console.log(err)
         }
       }
-
-  return (
-    <div className='w-1/6 flex bg-[#1e232a] flex-col pl-4 space-y-10'>
+      // <ToastContainer />
+      return (
+        <div className='w-1/6 flex bg-[#1e232a] flex-col pl-4 space-y-10'>
         
         <div className="flex items-center gap-x-2 py-1">
             <img src={sgLogo} alt="logo" className='w-[2rem] h-[2rem] rounded-full ' />
@@ -197,7 +203,7 @@ const SideBar = () => {
                 <button onClick={() => openModal("media")} className='bg-purple-500 text-slate-800 aspect-square h-6 flex items-center justify-center rounded-full text-[1.4rem]'>+</button>
                 
             </section>
-            <section>
+            <section className='mt-3'>
                 <ul className='font-normal text-[1rem] pl-6'>
 
                 {vaults && (vaults.mediaVaults.map(vault => 
@@ -216,7 +222,7 @@ const SideBar = () => {
                 <button onClick={() => openModal("bank")} className='bg-purple-500 text-slate-800 aspect-square h-6 flex items-center justify-center rounded-full text-[1.4rem]'>+</button>
                  
             </section>
-            <section>
+            <section className='mt-3'>
                 <ul className='font-normal text-[1rem] pl-6'>
 
                 {vaults && (vaults.bankVaults.map(vault => 

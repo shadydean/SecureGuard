@@ -1,4 +1,6 @@
 import { useContext, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ReactDOM from 'react-dom'
 import { AuthContext } from '../context/Auth';
 import { useParams } from 'react-router-dom';
@@ -50,6 +52,11 @@ const {id} = useParams()
           const val = await response.json();
           setBankContent(prev => [...prev,val])
           console.log(val)
+          toast.success("New bank info added.",{
+            autoClose : 3000,
+            theme : 'dark',
+            
+          })
           const cache = await caches.open("bank-cache");
           let url = `http://localhost:4321/api/bank/${id}`
           cache.match(url).then((cachedResponse) => {
@@ -145,6 +152,7 @@ const {id} = useParams()
 </form>
   </div>
             <button onClick={onClose} className="text-[2rem] p-0 my-2 aspect-square flex items-center justify-center bg-red-500 rounded-full border-none outline-none text-white">&times;</button>
+<ToastContainer />
         </div>
       ,
       document.body

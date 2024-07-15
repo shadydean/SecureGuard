@@ -7,6 +7,7 @@ import PrivateRoute from './pages/PrivateRoute'
 import Footer from './components/Footer'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import AdminPage from './pages/AdminPage'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
               <Route path='/home' element={<Home />} />
                 <Route path='/dashboard/:id' element = {<Dashboard />} />
                 <Route path='/profile' element={<Profile />} />
+                <Route path='/admin' element={<AdminPage />} />
               <Route path='/temp' element={<Temp />}/>
             </Route>
           </Routes>

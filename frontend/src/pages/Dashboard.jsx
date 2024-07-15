@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState, lazy, startTransition } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from "../context/Auth";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SideBar from "../components/SideBar";
@@ -11,6 +13,7 @@ const MediaSection = lazy(() => import("../components/MediaSection"));
 const TopBar = ({ currVault,user,userDispatch,search,setSearch }) => {
   const [isModelOpen,setIsModelOpen] = useState(false);
   const [name,setName] = useState("A")
+  const [role,setRole] = useState("user")
 
   function onLogout(){
     userDispatch({type:"LOGOUT",payload:{}});
@@ -19,9 +22,10 @@ const TopBar = ({ currVault,user,userDispatch,search,setSearch }) => {
   useEffect(() => {
     if(localStorage.getItem('name')){
       setName(localStorage.getItem('name'))
+      setRole(localStorage.getItem('role'))
     }
     else
-      setName("A")
+      {setName("A"); setRole("user")}
   },[user])
   return (
       <div className="flex justify-between mb-4">
@@ -46,6 +50,13 @@ const TopBar = ({ currVault,user,userDispatch,search,setSearch }) => {
                 >
                   Profile
                 </Link>
+                {(role === "admin") && <Link to={'/admin'}
+                  
+                  className='px-4 py-2 block hover:bg-gray-200 cursor-pointer'
+                  // onClick={() => handleOptionClick('Profile')}
+                >
+                  Admin
+                </Link>}
                 <button
                   className='px-4 py-2 block mx-auto hover:bg-gray-200 cursor-pointer outline-none'
                   // onClick={() => handleOptionClick('Feedback')}
@@ -137,6 +148,7 @@ const Dashboard = () => {
 
   const fetchWithCache = async (cacheName,url) => {
     const cache = await caches.open(cacheName);
+    console.log(cache)
     // Try to fetch from cache
     const cachedResponse = await cache.match(url);
 
@@ -154,6 +166,7 @@ const Dashboard = () => {
       return cachedResponse; // Return the cached response immediately
     } else {
       // If not in cache, fetch from network
+      console.log("network response")
       const networkResponse = await fetch(url, {
         headers: {
           "x-auth-token": user,
@@ -190,11 +203,11 @@ const Dashboard = () => {
     else{
       let cacheName = "media-cache",url = `http://localhost:4321/api/media/?vaultId=${id}`;
       for (let vault of vaults.mediaVaults) {
-        if (vault._id === id) {setCurrVault(["Media Vaults", vault.name]);cacheName  = "media-cache";url = `http://localhost:4321/api/media/?vaultId=${id}`;};
+        if (vault._id === id) {setCurrVault(["Media Vaults", vault.name]);cacheName  = "media-cache";url = `http://localhost:4321/api/media/?vaultId=${id}`;break;};
       }
   
       for (let vault of vaults.bankVaults) {
-        if (vault._id === id) {setCurrVault(["Bank Vaults", vault.name]); cacheName = "bank-cache";url = `http://localhost:4321/api/bank/${id}`;};
+        if (vault._id === id) {setCurrVault(["Bank Vaults", vault.name]); cacheName = "bank-cache";url = `http://localhost:4321/api/bank/${id}`;break;};
       }
       fetchVault(cacheName,url);
     } 
@@ -253,6 +266,11 @@ const Dashboard = () => {
       startTransition(() => {
         setContent([...content, newMedia]);
       })
+      toast.success("File uploaded successfully.",{
+        autoClose : 3000,
+        theme : 'dark',
+        
+      })
       const cache = await caches.open("media-cache");
       let url = `http://localhost:4321/api/media/?vaultId=${id}`
       cache.match(url).then((cachedResponse) => {
@@ -270,7 +288,8 @@ const Dashboard = () => {
     }
     // setLoading(false);
   };
-
+  
+  <ToastContainer theme="dark" />
   return (
     <div className="flex h-screen">
       <SideBar />

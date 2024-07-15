@@ -1,5 +1,7 @@
 // MediaContent.jsx
 import React, { Suspense, useContext, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner';
 import Modal from '../components/Modal';
 import { useParams } from 'react-router-dom';
@@ -51,6 +53,11 @@ const BankContent = ({content,setContent,selectedBank,setSelectedBank,bank}) => 
 
       if(response.ok){
         let newContent = content.filter(m => m._id !== selectedBank)
+        toast.success("Bank info deleted successfully.",{
+          autoClose : 3000,
+          theme : 'dark',
+          
+        })
         setContent(newContent)
         const cache = await caches.open("bank-cache");
       
@@ -72,6 +79,8 @@ const BankContent = ({content,setContent,selectedBank,setSelectedBank,bank}) => 
       console.log(err)
     }
   }
+
+  
     return (
         <div className='bg-gray-800 relative w-[25%] h-[35%] flex flex-col justify-evenly px-2 mr-6 mb-2 rounded-lg shadow-black shadow-md'>
       <div className='flex flex-col h-full pl-8 space-y-2 mt-8'>
@@ -123,6 +132,9 @@ const BankWrapper = ({content,selectedBank,setSelectedBank,setBankModelOpen,setC
 const BankSection = ({search,searchContent,content,setContent,loading}) => {
   const [selectedBank,setSelectedBank] = useState(null)
   const [bankModelOpen,setBankModelOpen] = useState(false)
+
+  
+
   return (
     <div className="flex h-full flex-wrap items-start">
           {loading ? (
@@ -140,6 +152,7 @@ const BankSection = ({search,searchContent,content,setContent,loading}) => {
             </Suspense>
           )}
           <Modal isOpen={bankModelOpen} content={content} setBankContent={setContent} setBankModelOpen={setBankModelOpen} method="post" />
+          <ToastContainer />
         </div>
   )
 }

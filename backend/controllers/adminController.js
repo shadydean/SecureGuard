@@ -1,25 +1,40 @@
-const User = require('../models/user.model'); 
+const UserModel = require('../models/user.model'); 
 
 const approveUser = async (req, res) => {
   try {
-    const idd = await User.findOne({"mobilenumber": req.params.id})
-    const user = await User.findById(idd._id).select('-password')
+    const user = await UserModel.findOne({_id: req.params.id}).select('-password')
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
     }
     user.active = true; 
     await user.save();
 
-    res.json({ msg: 'User approved successfully', user });
+    res.status(200).json({ msg: 'User approved successfully', user });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
 };
 
+const revokeUser = async (req, res) => {
+    try {
+      const user = await UserModel.findOne({_id: req.params.id}).select('-password')
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
+      user.active = false; 
+      await user.save();
+  
+      res.status(200).json({ msg: 'User revoked successfully', user });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  };
+
 const getUsers = async (req, res) => {
     try{
-        const users = await User.find().select('-password')
+        const users = await UserModel.find().select('-password')
         res.status(200).json(users)
 
     }catch(err){
@@ -29,8 +44,8 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try{
-        const idd = await User.findOne({"mobilenumber": req.params.id})
-        const user = await User.findById(idd._id).select('-password')
+        const idd = await UserModel.findOne({"mobilenumber": req.params.id})
+        const user = await UserModel.findById(idd._id).select('-password')
         res.status(200).json(user)
     }catch(err){
         res.status(500).send({message:"Error getting user"})
@@ -39,8 +54,8 @@ const getUserById = async (req, res) => {
 
 const removeUser = async (req, res) => {
     try{
-        const idd = await User.findOne({"mobilenumber": req.params.id})
-        const user = await User.findByIdAndDelete(idd._id).select('-password')
+        const idd = await UserModel.findOne({_id: req.params.id})
+        const user = await UserModel.findByIdAndDelete(idd._id).select('-password')
         res.status(200).json(user)
     }catch(err){
         res.status(500).send({message:"Error deleting user"})
@@ -49,8 +64,8 @@ const removeUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try{
-        const idd = await User.findOne({"mobilenumber": req.params.id})
-        const user = await User.findByIdAndUpdate(idd._id, req.body, { new: true })
+        const idd = await UserModel.findOne({"mobilenumber": req.params.id})
+        const user = await UserModel.findByIdAndUpdate(idd._id, req.body, { new: true })
         res.status(200).json(user)
     }catch(err){
         res.status(500).send({message:"Error updating user"})
@@ -59,5 +74,5 @@ const updateUser = async (req, res) => {
 
 
 module.exports = {
-  approveUser, getUsers, getUserById, removeUser, updateUser
+  approveUser, getUsers, getUserById, removeUser, updateUser,revokeUser
 };

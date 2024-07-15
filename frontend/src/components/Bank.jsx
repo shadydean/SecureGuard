@@ -1,4 +1,6 @@
 import { useContext, useState } from "react"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { VaultContext } from "../context/Vaults"
 import { useNavigate } from "react-router-dom"
 
@@ -25,13 +27,13 @@ const Bank = ({isBank,user,setIsModalOpen}) => {
         })
         if(response.status === 201){
             const data = await response.json()
+            toast.success("New vault created.")
             dispatch({type : "ADD",payload : {data : data, isBank : isBank}})
             setIsModalOpen(false)
             return nav(`/dashboard/${data._id}`)
         }
         setIsLoading(false)
     }
-
     return (
         <div className='bg-slate-700 h-2/6 w-1/5 flex flex-col items-center justify-center rounded-lg shadow-lg shadow-black'>
         <h2 className="text-2xl text-center font-bold mb-4 text-white">Create Vault</h2>
@@ -43,6 +45,7 @@ const Bank = ({isBank,user,setIsModalOpen}) => {
 
           <button type="button" onClick={createVault} disabled={isLoading} className="w-full bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-600">{isLoading ? "Creating" : "Create"}</button>
         </form>
+            {/* <ToastContainer /> */}
         </div>
     )
 }

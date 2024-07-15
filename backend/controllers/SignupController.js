@@ -39,12 +39,13 @@ const saveUser = async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
-                role: user.role
+                role: user.role,
+                active : user.active
             }
         };
         const token = jwt.sign(payload, process.env.JWT_PVT_KEY);
         
-        res.header('auth-token', token).send({ token,name });
+        res.header('auth-token', token).send({ token,name,role : user.role });
         // res.status(201).send({ message: "User created successfully" });
 
     } catch (err) {
