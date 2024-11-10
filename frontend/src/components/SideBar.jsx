@@ -133,7 +133,7 @@ const SideBar = () => {
       async function renameVault(activeVaultId,vaultName,vaultType){
         try {
           setIsVaultModifying(true)
-          const response = await fetch(`http://secureguard-production.up.railway.app/api/vault/${activeVaultId}`,{
+          const response = await fetch(`https://secureguard-production.up.railway.app/api/vault/${activeVaultId}`,{
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -158,7 +158,7 @@ const SideBar = () => {
       async function deleteVault(vaultType){
         try {
           setIsVaultModifying(true)
-          const response = await fetch(`http://secureguard-production.up.railway.app/api/vault/${activeVaultId}`,{
+          const response = await fetch(`https://secureguard-production.up.railway.app/api/vault/${activeVaultId}`,{
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",

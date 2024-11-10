@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes,Route } from 'react-router-dom'
 import './App.css'
 import LandingPage from './pages/LandingPage'
 import Home from './pages/Home'
-import Temp from './pages/Temp'
 import PrivateRoute from './pages/PrivateRoute'
 import Footer from './components/Footer'
 import Dashboard from './pages/Dashboard'
@@ -21,7 +20,6 @@ function App() {
                 <Route path='/dashboard/:id' element = {<Dashboard />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/admin' element={<AdminPage />} />
-              <Route path='/temp' element={<Temp />}/>
             </Route>
           </Routes>
         </Router>

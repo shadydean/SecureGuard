@@ -58,7 +58,7 @@ const {id} = useParams()
             
           })
           const cache = await caches.open("bank-cache");
-          let url = `http://secureguard-production.up.railway.app/api/bank/${id}`
+          let url = `https://secureguard-production.up.railway.app/api/bank/${id}`
           cache.match(url).then((cachedResponse) => {
             if (cachedResponse) {
               cachedResponse.json().then((cachedData) => {
@@ -84,7 +84,7 @@ const {id} = useParams()
   const handleEditInfo = async(e) => {
     e.preventDefault();
     setContentLoading(true)
-    const response = await fetch(`http://secureguard-production.up.railway.app/api/bank/${data._id}`, {
+    const response = await fetch(`https://secureguard-production.up.railway.app/api/bank/${data._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -106,7 +106,7 @@ const {id} = useParams()
         console.log(newData)
         setBankContent(newData)
         const cache = await caches.open("bank-cache");
-        let url = `http://secureguard-production.up.railway.app/api/bank/${id}`
+        let url = `https://secureguard-production.up.railway.app/api/bank/${id}`
           cache.match(url).then((cachedResponse) => {
             if (cachedResponse) {
               cachedResponse.json().then((cachedData) => {
