@@ -21,7 +21,6 @@ function App() {
                 <Route path='/dashboard/:id' element = {<Dashboard />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/admin' element={<AdminPage />} />
-              <Route path='/temp' element={<Temp />}/>
             </Route>
           </Routes>
         </Router>
