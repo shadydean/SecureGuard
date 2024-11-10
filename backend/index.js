@@ -17,15 +17,10 @@ const adminRoute = require('./routes/admin.route');
 const vaultRoute = require('./routes/vault.route')
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: ['https://secure-guard-smoky.vercel.app/','https://secure-guard-anudeeps-projects-3d2b22db.vercel.app/','https://secure-guard-git-main-anudeeps-projects-3d2b22db.vercel.app/'],
     credentials : true
 }))
 app.use(express.json());
-
-app.use((req,res,next) => {
-    console.log("middleware -> ",req.url)
-    next();
-})
 
 app.get('/', (req, res) => {
     res.send('API is running');

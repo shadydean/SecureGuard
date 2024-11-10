@@ -117,14 +117,14 @@ const TopBar = ({ user,userDispatch,search,setSearch,type,setType }) => {
                 <ul>
                   <Link to={'/profile'}
                     className='px-4 py-2 block hover:bg-gray-200 cursor-pointer'
-                    // onClick={() => handleOptionClick('Profile')}
+                    
                   >
                     Profile
                   </Link>
                   {(role === "admin") && <Link to={'/admin'}
                     
                     className='px-4 py-2 block hover:bg-gray-200 cursor-pointer'
-                    // onClick={() => handleOptionClick('Profile')}
+                    
                   >
                     Admin
                   </Link>}
@@ -160,7 +160,7 @@ const AdminPage = () => {
     useEffect(() => {
         setIsLoading(true)
         async function fetchUsers(){
-            const res = await fetch('http://localhost:4321/api/credentials/all',{
+            const res = await fetch('http://secureguard-production.up.railway.app/api/credentials/all',{
                 method:'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -193,6 +193,12 @@ const Dashboard = () => {
         else
         setBankContent(data);
     } else {
+        console.log("res -> ",data)
+        toast.error(data.msg,{
+          autoClose : 3000,
+          theme : 'dark',
+          
+        })
         console.log("Something went wrong");
       }
       setLoading(false);
@@ -201,13 +207,13 @@ const Dashboard = () => {
 
     if (!user) navigate("/");
     else{
-      let cacheName = "media-cache",url = `http://localhost:4321/api/media/?vaultId=${id}`;
+      let cacheName = "media-cache",url = `http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`;
       for (let vault of vaults.mediaVaults) {
-        if (vault._id === id) {setCurrVault(["Media Vaults", vault.name]);cacheName  = "media-cache";url = `http://localhost:4321/api/media/?vaultId=${id}`;break;};
+        if (vault._id === id) {setCurrVault(["Media Vaults", vault.name]);cacheName  = "media-cache";url = `http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`;break;};
       }
   
       for (let vault of vaults.bankVaults) {
-        if (vault._id === id) {setCurrVault(["Bank Vaults", vault.name]); cacheName = "bank-cache";url = `http://localhost:4321/api/bank/${id}`;break;};
+        if (vault._id === id) {setCurrVault(["Bank Vaults", vault.name]); cacheName = "bank-cache";url = `http://secureguard-production.up.railway.app/api/bank/${id}`;break;};
       }
       fetchVault(cacheName,url);
     } 
@@ -260,8 +266,8 @@ const Dashboard = () => {
       body: formData,
     });
 
+    const newMedia = await res.json();
     if (res.ok) {
-      const newMedia = await res.json();
       // console.log(newMedia)
       startTransition(() => {
         setContent([...content, newMedia]);
@@ -272,7 +278,7 @@ const Dashboard = () => {
         
       })
       const cache = await caches.open("media-cache");
-      let url = `http://localhost:4321/api/media/?vaultId=${id}`
+      let url = `http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`
       cache.match(url).then((cachedResponse) => {
         if (cachedResponse) {
           cachedResponse.json().then((cachedData) => {
@@ -284,6 +290,11 @@ const Dashboard = () => {
         }
       });
     } else {
+      toast.error(newMedia.msg,{
+        autoClose : 3000,
+        theme : 'dark',
+        
+      })
       console.log("Something went wrong");
     }
     // setLoading(false);

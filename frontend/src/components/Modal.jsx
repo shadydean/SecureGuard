@@ -37,7 +37,7 @@ const {id} = useParams()
         return handleEditInfo(e);
 
       setContentLoading(true)
-      const response = await fetch(`http://localhost:4321/api/bank/`, {
+      const response = await fetch(`http://secureguard-production.up.railway.app/api/bank/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,8 +48,8 @@ const {id} = useParams()
           ...formData
         })
         });
+        const val = await response.json();
         if(response.ok) {
-          const val = await response.json();
           setBankContent(prev => [...prev,val])
           console.log(val)
           toast.success("New bank info added.",{
@@ -58,7 +58,7 @@ const {id} = useParams()
             
           })
           const cache = await caches.open("bank-cache");
-          let url = `http://localhost:4321/api/bank/${id}`
+          let url = `http://secureguard-production.up.railway.app/api/bank/${id}`
           cache.match(url).then((cachedResponse) => {
             if (cachedResponse) {
               cachedResponse.json().then((cachedData) => {
@@ -70,6 +70,13 @@ const {id} = useParams()
             }
           });
         }
+        else {
+          console.log(val.msg)
+          toast.error(val.msg,{
+            autoClose : 3000,
+            theme : 'dark',    
+          })
+        }
         setBankModelOpen(false)
       setContentLoading(false)
   }
@@ -77,7 +84,7 @@ const {id} = useParams()
   const handleEditInfo = async(e) => {
     e.preventDefault();
     setContentLoading(true)
-    const response = await fetch(`http://localhost:4321/api/bank/${data._id}`, {
+    const response = await fetch(`http://secureguard-production.up.railway.app/api/bank/${data._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -99,7 +106,7 @@ const {id} = useParams()
         console.log(newData)
         setBankContent(newData)
         const cache = await caches.open("bank-cache");
-        let url = `http://localhost:4321/api/bank/${id}`
+        let url = `http://secureguard-production.up.railway.app/api/bank/${id}`
           cache.match(url).then((cachedResponse) => {
             if (cachedResponse) {
               cachedResponse.json().then((cachedData) => {

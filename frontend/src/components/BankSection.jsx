@@ -43,7 +43,7 @@ const BankContent = ({content,setContent,selectedBank,setSelectedBank,bank}) => 
   async function deleteBank(){
     try {
       setIsLoading(true)
-      const response = await fetch(`http://localhost:4321/api/bank/${selectedBank}`,{
+      const response = await fetch(`http://secureguard-production.up.railway.app/api/bank/${selectedBank}`,{
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -61,11 +61,11 @@ const BankContent = ({content,setContent,selectedBank,setSelectedBank,bank}) => 
         setContent(newContent)
         const cache = await caches.open("bank-cache");
       
-      cache.match(`http://localhost:4321/api/bank/${id}`).then((cachedResponse) => {
+      cache.match(`http://secureguard-production.up.railway.app/api/bank/${id}`).then((cachedResponse) => {
         if (cachedResponse) {
           cachedResponse.json().then((cachedData) => {
             cache.put(
-              `http://localhost:4321/api/bank/${id}`,
+              `http://secureguard-production.up.railway.app/api/bank/${id}`,
               new Response(JSON.stringify(newContent))
             );
           });

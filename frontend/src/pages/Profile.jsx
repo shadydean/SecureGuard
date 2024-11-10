@@ -33,7 +33,7 @@ const ChangePassword = ({setIsModalOpen,user,userData}) => {
       console.log("Both passwords must match")
     else{
       try{
-        const response = await fetch(`http://localhost:4321/api/credentials/changePassword/${userData._id}`,{
+        const response = await fetch(`http://secureguard-production.up.railway.app/api/credentials/changePassword/${userData._id}`,{
           method : 'PUT',
           headers : {'Content-Type' : 'application/json','x-auth-token' : user},
           body : JSON.stringify(formData)
@@ -86,7 +86,7 @@ const Profile = () => {
     setIsLoading(true);
     async function fetchUser() {
       try {
-        const response = await fetch("http://localhost:4321/api/credentials", {
+        const response = await fetch("http://secureguard-production.up.railway.app/api/credentials", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -112,7 +112,7 @@ const Profile = () => {
   const handleEditProfile = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4321/api/credentials/${userData._id}`,
+        `http://secureguard-production.up.railway.app/api/credentials/${userData._id}`,
         {
           method: "PUT",
           headers: {
@@ -137,7 +137,7 @@ const Profile = () => {
   const handleDeleteAccount = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4321/api/credentials/${userData._id}`,
+        `http://secureguard-production.up.railway.app/api/credentials/${userData._id}`,
         {
           method: "DELETE",
           headers: {

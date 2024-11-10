@@ -7,7 +7,7 @@ const approved = async (req, res, next) => {
             req.active = true;
             return next();
         } else {
-            return res.status(401).json("You are unauthorized.");
+            return res.status(401).json({msg : "You cannot use service yet."});
         }
     } catch (error) {
         console.log(error)

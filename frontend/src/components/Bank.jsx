@@ -14,7 +14,7 @@ const Bank = ({isBank,user,setIsModalOpen}) => {
 
     async function createVault(){
         setIsLoading(true)
-        const response = await fetch('http://localhost:4321/api/vault', {
+        const response = await fetch('http://secureguard-production.up.railway.app/api/vault', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,12 +25,19 @@ const Bank = ({isBank,user,setIsModalOpen}) => {
                     vaultType: (isBank ? "bank" : "media")
                 })
         })
+        const data = await response.json()
         if(response.status === 201){
-            const data = await response.json()
             toast.success("New vault created.")
             dispatch({type : "ADD",payload : {data : data, isBank : isBank}})
             setIsModalOpen(false)
             return nav(`/dashboard/${data._id}`)
+        }
+        else {
+            toast.error(data.msg,{
+                autoClose : 3000,
+                theme : 'dark',
+                
+            })
         }
         setIsLoading(false)
     }
