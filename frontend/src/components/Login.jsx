@@ -7,7 +7,7 @@ export default function Login({hadAccount,setHadAccount}) {
   const {dispatch} = useContext(AuthContext)
   const onSubmit = async (data) => {
     console.log(data)
-    const status = await fetch("http://secureguard-production.up.railway.app/api/login",{
+    const status = await fetch("https://secureguard-production.up.railway.app/api/login",{
       method : "POST",
       headers : {
         "Content-Type" : "application/json"

@@ -160,7 +160,7 @@ const AdminPage = () => {
     useEffect(() => {
         setIsLoading(true)
         async function fetchUsers(){
-            const res = await fetch('http://secureguard-production.up.railway.app/api/credentials/all',{
+            const res = await fetch('https://secureguard-production.up.railway.app/api/credentials/all',{
                 method:'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -189,7 +189,7 @@ const AdminPage = () => {
   async function approve(userId){
       setIsApproving(true)
     try{
-        const res = await fetch(`http://localhost:4321/api/admin/approveUser/${userId}`,{
+        const res = await fetch(`https://localhost:4321/api/admin/approveUser/${userId}`,{
             method:'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ const AdminPage = () => {
   async function revoke(userId){
     setIsApproving(true)
   try{
-      const res = await fetch(`http://localhost:4321/api/admin/revokeUser/${userId}`,{
+      const res = await fetch(`https://localhost:4321/api/admin/revokeUser/${userId}`,{
           method:'PUT',
           headers: {
               'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ const AdminPage = () => {
   async function deleteUser(userId){
     setIsDeleting(true)
   try{
-      const res = await fetch(`http://localhost:4321/api/admin/delete/${userId}`,{
+      const res = await fetch(`https://localhost:4321/api/admin/delete/${userId}`,{
           method:'DELETE',
           headers: {
               'Content-Type': 'application/json',

@@ -23,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     setIsLoading(true)
     async function fetchData() {
-      const res = await fetch("http://secureguard-production.up.railway.app/api/vault",{
+      const res = await fetch("https://secureguard-production.up.railway.app/api/vault",{
         method : "GET",
         headers : {
           'x-auth-token' : user

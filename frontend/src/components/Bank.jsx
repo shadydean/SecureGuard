@@ -14,7 +14,7 @@ const Bank = ({isBank,user,setIsModalOpen}) => {
 
     async function createVault(){
         setIsLoading(true)
-        const response = await fetch('http://secureguard-production.up.railway.app/api/vault', {
+        const response = await fetch('https://secureguard-production.up.railway.app/api/vault', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

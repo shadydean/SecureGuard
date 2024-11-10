@@ -63,7 +63,7 @@ const MediaContainer = ({media,children,content,setContent}) => {
   async function deleteMedia(){
     try {
       setIsLoading(true)
-      const response = await fetch(`http://secureguard-production.up.railway.app/api/media/${selectedMedia}`,{
+      const response = await fetch(`https://secureguard-production.up.railway.app/api/media/${selectedMedia}`,{
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -79,11 +79,11 @@ const MediaContainer = ({media,children,content,setContent}) => {
         toast.success("File deleted Successfully.")
         const cache = await caches.open("media-cache");
       
-      cache.match(`http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`).then((cachedResponse) => {
+      cache.match(`https://secureguard-production.up.railway.app/api/media/?vaultId=${id}`).then((cachedResponse) => {
         if (cachedResponse) {
           cachedResponse.json().then((cachedData) => {
             cache.put(
-              `http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`,
+              `https://secureguard-production.up.railway.app/api/media/?vaultId=${id}`,
               new Response(JSON.stringify(newContent))
             );
           });
@@ -101,7 +101,7 @@ const MediaContainer = ({media,children,content,setContent}) => {
 
   async function renameMedia(){
     try{
-      const response = await fetch(`http://secureguard-production.up.railway.app/api/media/${selectedMedia}`,{
+      const response = await fetch(`https://secureguard-production.up.railway.app/api/media/${selectedMedia}`,{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -120,11 +120,11 @@ const MediaContainer = ({media,children,content,setContent}) => {
         setContent(newData)
         const cache = await caches.open("media-cache");
       
-      cache.match(`http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`).then((cachedResponse) => {
+      cache.match(`https://secureguard-production.up.railway.app/api/media/?vaultId=${id}`).then((cachedResponse) => {
         if (cachedResponse) {
           cachedResponse.json().then((cachedData) => {
             cache.put(
-              `http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`,
+              `https://secureguard-production.up.railway.app/api/media/?vaultId=${id}`,
               new Response(JSON.stringify(newData))
             );
           });
@@ -294,7 +294,7 @@ const MediaSection = ({search,searchContent,content,setContent,loading}) => {
 
     // console.log(data,formData)
 
-    const res = await fetch(`http://secureguard-production.up.railway.app/api/media`, {
+    const res = await fetch(`https://secureguard-production.up.railway.app/api/media`, {
       method: "POST",
       headers: {
         "x-auth-token": user,
@@ -314,7 +314,7 @@ const MediaSection = ({search,searchContent,content,setContent,loading}) => {
         
       })
       const cache = await caches.open("media-cache");
-      let url = `http://secureguard-production.up.railway.app/api/media/?vaultId=${id}`
+      let url = `https://secureguard-production.up.railway.app/api/media/?vaultId=${id}`
       cache.match(url).then((cachedResponse) => {
         if (cachedResponse) {
           cachedResponse.json().then((cachedData) => {
