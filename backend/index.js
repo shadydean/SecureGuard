@@ -18,8 +18,15 @@ const vaultRoute = require('./routes/vault.route')
 
 app.use(cors({
     origin: ['https://secure-guard-smoky.vercel.app/','https://secure-guard-anudeeps-projects-3d2b22db.vercel.app/','https://secure-guard-git-main-anudeeps-projects-3d2b22db.vercel.app/'],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials : true
 }))
+app.options('*', cors());  // Allow preflight across all routes
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");  // Adjust to only allow specific origins in production
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.use(express.json());
 
 app.get('/', (req, res) => {
