@@ -37,7 +37,7 @@ const {id} = useParams()
         return handleEditInfo(e);
 
       setContentLoading(true)
-      const response = await fetch(`http://secureguard-production.up.railway.app/api/bank/`, {
+      const response = await fetch(`https://secureguard-production.up.railway.app/api/bank/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
